@@ -1,0 +1,648 @@
+<!DOCTYPE html><html lang="en" style="width: 1280px; min-height: 100%; position: relative;"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;background-color:#ffffff;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        primary: "#09090b",
+        "on-primary": "#ffffff",
+        secondary: "#52525b",
+        "on-secondary": "#ffffff",
+        surface: "#ffffff",
+        "on-surface": "#09090b",
+        "on-surface-variant": "#52525b",
+        "surface-container-lowest": "#ffffff",
+        "surface-container-low": "#fafafa",
+        "surface-container": "#f4f4f5",
+        "surface-container-high": "#ececee",
+        "surface-container-highest": "#e4e4e7",
+        outline: "#71717a",
+        "outline-variant": "#e4e4e7",
+        "primary-container": "#18181b",
+        "on-primary-container": "#a1a1aa"
+      },
+      fontFamily: {
+        body: ["Plus Jakarta Sans", "sans-serif"],
+        display: ["Plus Jakarta Sans", "sans-serif"]
+      }
+    }
+  }
+};</script></head><body class="bg-white font-body text-zinc-900 antialiased min-h-screen selection:bg-zinc-900 selection:text-white">
+<!-- HEADER / NAVIGATION -->
+<header class="fixed top-0 left-0 right-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-zinc-200/80 transition-all">
+<div class="h-20 max-w-[1360px] mx-auto px-8 flex items-center justify-between gap-8">
+<div class="flex items-center gap-3.5 shrink-0">
+<div class="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center font-bold tracking-tighter text-base shadow-sm">
+<span class="material-symbols-outlined text-[20px]">account_balance</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-base text-zinc-950 tracking-tight leading-tight">BizPermit</span>
+<span class="text-[10px] text-zinc-400 font-semibold tracking-widest uppercase">Municipal Licensure</span>
+</div>
+</div>
+<nav class="hidden lg:flex items-center gap-8 text-[14px]">
+<a aria-current="page" class="font-semibold text-black border-b-2 border-black py-1.5 transition-colors" href="#">Home</a>
+<a class="font-medium text-zinc-500 hover:text-black py-1.5 transition-colors" href="#">Explore Licenses</a>
+<a class="font-medium text-zinc-500 hover:text-black py-1.5 transition-colors" href="#how-it-works">How It Works</a>
+<a class="font-medium text-zinc-500 hover:text-black py-1.5 transition-colors" href="#standards">Municipal Standards</a>
+<a class="font-medium text-zinc-500 hover:text-black py-1.5 transition-colors" href="#faq">Help &amp; FAQs</a>
+</nav>
+<div class="flex items-center gap-4 shrink-0">
+<a class="hidden sm:inline-flex items-center justify-center text-[13px] font-semibold text-zinc-600 hover:text-black px-4 py-2 transition-colors" href="#">Sign In</a>
+<a class="inline-flex items-center justify-center text-[13px] font-semibold bg-black text-white hover:bg-zinc-800 px-5 py-2.5 rounded-full shadow-sm transition-all" href="#search-anchor">Get Started</a>
+<div class="w-9 h-9 rounded-full border border-zinc-200 bg-zinc-50 flex items-center justify-center text-zinc-700">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+</div>
+</div>
+</header>
+<main class="w-full pt-20 bg-white">
+<div class="flex flex-col w-full">
+<!-- HERO SECTION -->
+<section class="relative w-full overflow-hidden pt-16 pb-28 border-b border-zinc-100">
+<div class="max-w-[1360px] mx-auto px-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12 items-center">
+<!-- Left Column: Copy & Actions -->
+<div class="lg:col-span-7 flex flex-col items-start gap-8 z-10">
+<!-- Badge -->
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 bg-zinc-50">
+<span class="w-2 h-2 rounded-full bg-black"></span>
+<span class="text-[11px] font-semibold text-zinc-800 uppercase tracking-widest">
+            Municipal Digital Commerce Initiative
+          </span>
+</div>
+<!-- Headline -->
+<h1 class="text-4xl sm:text-5xl lg:text-[58px] font-extrabold text-zinc-950 leading-[1.1] tracking-tight">
+          Start Your Business.<br>
+          We’ll Help You <span class="font-light italic text-zinc-500 underline decoration-zinc-300 decoration-1 underline-offset-8">Get Licensed.</span>
+</h1>
+<!-- Subheading -->
+<p class="text-lg text-zinc-500 font-normal leading-relaxed max-w-xl">
+          Discover statutory license requirements, complete digital filings, track verification in real time, and oversee renewals in a single authoritative portal.
+        </p>
+<!-- CTAs -->
+<div class="flex flex-wrap items-center gap-4 pt-2">
+<a class="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-black text-white text-sm font-semibold hover:bg-zinc-800 shadow-[0_4px_14px_rgba(0,0,0,0.12)] transition-all group" href="#search-anchor">
+<span class="">Explore Licenses</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</a>
+<a class="inline-flex items-center gap-2 px-7 py-4 rounded-full bg-white text-zinc-900 border border-zinc-300 text-sm font-semibold hover:border-black transition-all" href="#how-it-works">
+<span class="material-symbols-outlined text-[18px] text-zinc-600">play_circle</span>
+<span class="">How It Works</span>
+</a>
+</div>
+<!-- 3 Micro Trust Signals -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 w-full max-w-xl border-t border-zinc-100">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full border border-zinc-200 bg-zinc-50 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-zinc-800 text-[16px]">verified</span>
+</div>
+<span class="text-xs text-zinc-700 font-medium">Direct Statutory Filing</span>
+</div>
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full border border-zinc-200 bg-zinc-50 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-zinc-800 text-[16px]">speed</span>
+</div>
+<span class="text-xs text-zinc-700 font-medium">Audited SLAs</span>
+</div>
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full border border-zinc-200 bg-zinc-50 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-zinc-800 text-[16px]">lock</span>
+</div>
+<span class="text-xs text-zinc-700 font-medium">Encrypted Vault</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Monochromatic High-Fidelity Fintech Specimen Card -->
+<div class="lg:col-span-5 relative">
+
+</div>
+</div>
+</div>
+</section>
+<!-- QUICK LICENSE DISCOVERY & SEARCH BAR -->
+<section class="w-full py-16 px-8 bg-zinc-50 border-b border-zinc-200/80" id="search-anchor">
+<div class="max-w-[1240px] mx-auto bg-white rounded-3xl p-8 lg:p-10 border border-zinc-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
+<!-- Top Text Banner -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-6 border-b border-zinc-100 mb-6">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-zinc-900 text-[22px]">manage_search</span>
+<h2 class="text-sm font-bold text-zinc-950 uppercase tracking-wider">Civic Licensure Database Registry</h2>
+</div>
+<span class="text-xs text-zinc-400 font-medium">Search over 380+ certified municipal commercial frameworks</span>
+</div>
+<!-- Search Controls Bar -->
+<form class="grid grid-cols-1 md:grid-cols-12 gap-3" onsubmit="event.preventDefault();">
+<!-- Input Field -->
+<div class="md:col-span-6 flex items-center bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3.5 focus-within:border-black focus-within:bg-white transition-all">
+<span class="material-symbols-outlined text-zinc-400 text-[20px] mr-3">search</span>
+<input class="w-full bg-transparent text-zinc-900 placeholder:text-zinc-400 text-sm focus:outline-none" placeholder="Search licenses, commercial activities, or municipal codes..." type="text">
+</div>
+<!-- Category Dropdown -->
+<div class="md:col-span-3 flex items-center bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3.5 focus-within:border-black">
+<span class="material-symbols-outlined text-zinc-400 text-[20px] mr-2">domain</span>
+<select class="w-full bg-transparent text-zinc-900 text-sm focus:outline-none cursor-pointer">
+<option>All Commercial Sectors</option>
+<option>Food &amp; Hospitality</option>
+<option>Commercial Retail</option>
+<option>Healthcare &amp; Clinical</option>
+<option>Light Industrial &amp; Mfg</option>
+<option>Professional Consultancies</option>
+</select>
+</div>
+<!-- Search Action Button -->
+<div class="md:col-span-3">
+<button class="w-full h-full min-h-[48px] bg-black hover:bg-zinc-800 text-white font-semibold text-xs tracking-wide uppercase rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-sm" type="button">
+<span class="">Find Requirements</span>
+<span class="material-symbols-outlined text-[16px]">east</span>
+</button>
+</div>
+</form>
+<!-- Quick Category Chips -->
+<div class="flex flex-wrap items-center gap-2 pt-6">
+<span class="text-xs text-zinc-400 mr-1 font-medium">Frequently verified:</span>
+<button class="px-3.5 py-1.5 rounded-full bg-zinc-100 hover:bg-black hover:text-white text-zinc-700 text-xs font-medium transition-colors flex items-center gap-1.5 border border-transparent hover:border-black" type="button">
+<span class="material-symbols-outlined text-[14px]">storefront</span> Retail Outlets
+      </button>
+<button class="px-3.5 py-1.5 rounded-full bg-zinc-100 hover:bg-black hover:text-white text-zinc-700 text-xs font-medium transition-colors flex items-center gap-1.5 border border-transparent hover:border-black" type="button">
+<span class="material-symbols-outlined text-[14px]">restaurant</span> Food Establishments
+      </button>
+<button class="px-3.5 py-1.5 rounded-full bg-zinc-100 hover:bg-black hover:text-white text-zinc-700 text-xs font-medium transition-colors flex items-center gap-1.5 border border-transparent hover:border-black" type="button">
+<span class="material-symbols-outlined text-[14px]">precision_manufacturing</span> Manufacturing
+      </button>
+<button class="px-3.5 py-1.5 rounded-full bg-zinc-100 hover:bg-black hover:text-white text-zinc-700 text-xs font-medium transition-colors flex items-center gap-1.5 border border-transparent hover:border-black" type="button">
+<span class="material-symbols-outlined text-[14px]">health_and_safety</span> Health &amp; Clinical
+      </button>
+<button class="px-3.5 py-1.5 rounded-full bg-zinc-100 hover:bg-black hover:text-white text-zinc-700 text-xs font-medium transition-colors flex items-center gap-1.5 border border-transparent hover:border-black" type="button">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span> Logistics &amp; Transport
+      </button>
+</div>
+</div>
+</section>
+<!-- CORE FUNCTIONAL PILLARS (Interactive Cards Grid) -->
+<section class="w-full py-28 px-8 bg-white border-b border-zinc-100" id="standards">
+<div class="max-w-[1360px] mx-auto">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+<div class="max-w-xl">
+<span class="text-xs font-bold uppercase tracking-widest text-zinc-400">
+          Authoritative Civic Engine
+        </span>
+<h2 class="text-3xl sm:text-4xl font-extrabold text-zinc-950 mt-2 tracking-tight">
+          Comprehensive Licensing Infrastructure
+        </h2>
+<p class="text-base text-zinc-500 mt-3 leading-relaxed">
+          Built from statutory charter mandates to minimize commercial regulatory frictions and protect public compliance standards.
+        </p>
+</div>
+<div class="flex items-center gap-2.5 text-xs font-medium text-zinc-500 py-1.5 px-3.5 rounded-full bg-zinc-50 border border-zinc-200">
+<span class="">Municipal Code Revision: 2026.2</span>
+<span class="w-1.5 h-1.5 rounded-full bg-zinc-900"></span>
+<span class="text-zinc-900 font-semibold">Official Jurisdiction</span>
+</div>
+</div>
+<!-- 4 Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Pillar 1 -->
+<div class="bg-white rounded-2xl p-8 flex flex-col justify-between border border-zinc-200 hover:border-black transition-all group">
+<div>
+<div class="w-12 h-12 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-900 group-hover:bg-black group-hover:text-white group-hover:border-black transition-all mb-6">
+<span class="material-symbols-outlined text-[22px]">travel_explore</span>
+</div>
+<span class="text-[11px] uppercase tracking-wider text-zinc-400 font-bold">Pillar 01</span>
+<h3 class="text-lg font-bold text-zinc-950 mt-1">Explore Licenses</h3>
+<p class="text-xs text-zinc-500 mt-3 leading-relaxed">
+            Exhaustive statutory catalog detailing certified prerequisites, municipal fee structures, and guaranteed turnaround SLAs.
+          </p>
+</div>
+<div class="pt-8 flex items-center justify-between text-xs font-semibold text-zinc-950 border-t border-zinc-100 mt-6">
+<span class="">Query Catalog</span>
+<span class="material-symbols-outlined text-[16px] text-zinc-400 group-hover:text-black group-hover:translate-x-1 transition-all">arrow_forward</span>
+</div>
+</div>
+<!-- Pillar 2 -->
+<div class="bg-white rounded-2xl p-8 flex flex-col justify-between border border-zinc-200 hover:border-black transition-all group">
+<div>
+<div class="w-12 h-12 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-900 group-hover:bg-black group-hover:text-white group-hover:border-black transition-all mb-6">
+<span class="material-symbols-outlined text-[22px]">assignment_turned_in</span>
+</div>
+<span class="text-[11px] uppercase tracking-wider text-zinc-400 font-bold">Pillar 02</span>
+<h3 class="text-lg font-bold text-zinc-950 mt-1">Apply Online</h3>
+<p class="text-xs text-zinc-500 mt-3 leading-relaxed">
+            Pre-validated smart filings that flag clerical omissions immediately, paired with instant municipal fiscal treasury receipts.
+          </p>
+</div>
+<div class="pt-8 flex items-center justify-between text-xs font-semibold text-zinc-950 border-t border-zinc-100 mt-6">
+<span class="">Launch Filing</span>
+<span class="material-symbols-outlined text-[16px] text-zinc-400 group-hover:text-black group-hover:translate-x-1 transition-all">arrow_forward</span>
+</div>
+</div>
+<!-- Pillar 3 -->
+<div class="bg-white rounded-2xl p-8 flex flex-col justify-between border border-zinc-200 hover:border-black transition-all group">
+<div>
+<div class="w-12 h-12 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-900 group-hover:bg-black group-hover:text-white group-hover:border-black transition-all mb-6">
+<span class="material-symbols-outlined text-[22px]">radar</span>
+</div>
+<span class="text-[11px] uppercase tracking-wider text-zinc-400 font-bold">Pillar 03</span>
+<h3 class="text-lg font-bold text-zinc-950 mt-1">Track Applications</h3>
+<p class="text-xs text-zinc-500 mt-3 leading-relaxed">
+            Live ledger tracking municipal inspection checkpoints, field officer timestamps, and statutory approval milestones.
+          </p>
+</div>
+<div class="pt-8 flex items-center justify-between text-xs font-semibold text-zinc-950 border-t border-zinc-100 mt-6">
+<span class="">Status Portal</span>
+<span class="material-symbols-outlined text-[16px] text-zinc-400 group-hover:text-black group-hover:translate-x-1 transition-all">arrow_forward</span>
+</div>
+</div>
+<!-- Pillar 4 -->
+<div class="bg-white rounded-2xl p-8 flex flex-col justify-between border border-zinc-200 hover:border-black transition-all group">
+<div>
+<div class="w-12 h-12 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-900 group-hover:bg-black group-hover:text-white group-hover:border-black transition-all mb-6">
+<span class="material-symbols-outlined text-[22px]">published_with_changes</span>
+</div>
+<span class="text-[11px] uppercase tracking-wider text-zinc-400 font-bold">Pillar 04</span>
+<h3 class="text-lg font-bold text-zinc-950 mt-1">Manage Renewals</h3>
+<p class="text-xs text-zinc-500 mt-3 leading-relaxed">
+            Proactive 90-day early notification cycles, seamless single-click re-attestations, and zero downtime compliance safeguards.
+          </p>
+</div>
+<div class="pt-8 flex items-center justify-between text-xs font-semibold text-zinc-950 border-t border-zinc-100 mt-6">
+<span class="">Renewal Hub</span>
+<span class="material-symbols-outlined text-[16px] text-zinc-400 group-hover:text-black group-hover:translate-x-1 transition-all">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FROM FILING TO APPROVAL (Interactive Step Sequence) -->
+<section class="w-full py-28 bg-zinc-50 px-8 border-b border-zinc-200/80" id="how-it-works">
+<div class="max-w-[1360px] mx-auto">
+<!-- Section Top -->
+<div class="text-center max-w-2xl mx-auto mb-20">
+<span class="text-xs font-bold uppercase tracking-widest text-zinc-400">Linear Governance Architecture</span>
+<h2 class="text-3xl sm:text-4xl font-extrabold text-zinc-950 mt-2 tracking-tight">From Filing to Approval in Four Steps</h2>
+<p class="text-base text-zinc-500 mt-3 leading-relaxed">
+        Engineered to eliminate administrative bottlenecking through algorithmic document auditing and direct departmental routing.
+      </p>
+</div>
+<!-- Step Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Step 01 -->
+<div class="bg-white rounded-2xl p-8 flex flex-col justify-between border border-zinc-200">
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="text-3xl font-extrabold text-zinc-300">01</span>
+<div class="w-8 h-8 rounded-full border border-zinc-200 bg-zinc-50 flex items-center justify-center text-zinc-900">
+<span class="material-symbols-outlined text-[18px]">account_tree</span>
+</div>
+</div>
+<h3 class="text-base font-bold text-zinc-950 mb-2">Category Mapping</h3>
+<p class="text-xs text-zinc-500 leading-relaxed">
+            Specify commercial activities, operational surface square footage, and local ward coordinates for auto-generated statutory guidelines.
+          </p>
+</div>
+<div class="mt-8 pt-4 border-t border-zinc-100 flex items-center gap-1.5 text-[11px] text-zinc-600 font-semibold">
+<span class="material-symbols-outlined text-[14px] text-zinc-950">bolt</span> Automated Code Assignment
+        </div>
+</div>
+<!-- Step 02 -->
+<div class="bg-white rounded-2xl p-8 flex flex-col justify-between border border-zinc-200">
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="text-3xl font-extrabold text-zinc-300">02</span>
+<div class="w-8 h-8 rounded-full border border-zinc-200 bg-zinc-50 flex items-center justify-center text-zinc-900">
+<span class="material-symbols-outlined text-[18px]">rule_folder</span>
+</div>
+</div>
+<h3 class="text-base font-bold text-zinc-950 mb-2">Pre-Validated Filing</h3>
+<p class="text-xs text-zinc-500 leading-relaxed">
+            Upload floor plans, leases, and operator credentials. The algorithmic portal verifies structural formatting prior to state clerk submission.
+          </p>
+</div>
+<div class="mt-8 pt-4 border-t border-zinc-100 flex items-center gap-1.5 text-[11px] text-zinc-600 font-semibold">
+<span class="material-symbols-outlined text-[14px] text-zinc-950">check</span> Zero-Defect Intake Check
+        </div>
+</div>
+<!-- Step 03 -->
+<div class="bg-white rounded-2xl p-8 flex flex-col justify-between border border-zinc-200">
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="text-3xl font-extrabold text-zinc-300">03</span>
+<div class="w-8 h-8 rounded-full border border-zinc-200 bg-zinc-50 flex items-center justify-center text-zinc-900">
+<span class="material-symbols-outlined text-[18px]">assignment_ind</span>
+</div>
+</div>
+<h3 class="text-base font-bold text-zinc-950 mb-2">Regulatory Inspection</h3>
+<p class="text-xs text-zinc-500 leading-relaxed">
+            Automated dispatch of municipal building, fire, and health safety examiners with scheduled time windows and transparent checklists.
+          </p>
+</div>
+<div class="mt-8 pt-4 border-t border-zinc-100 flex items-center gap-1.5 text-[11px] text-zinc-600 font-semibold">
+<span class="material-symbols-outlined text-[14px] text-zinc-950">calendar_month</span> Synchronized Field Audits
+        </div>
+</div>
+<!-- Step 04 -->
+<div class="bg-white rounded-2xl p-8 flex flex-col justify-between border border-zinc-200">
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="text-3xl font-extrabold text-zinc-300">04</span>
+<div class="w-8 h-8 rounded-full border border-zinc-200 bg-zinc-50 flex items-center justify-center text-zinc-900">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+</div>
+<h3 class="text-base font-bold text-zinc-950 mb-2">Digital Permit Dispatch</h3>
+<p class="text-xs text-zinc-500 leading-relaxed">
+            Download your verifiable license certificate backed by municipal cryptographic signatures and public QR ledger validation.
+          </p>
+</div>
+<div class="mt-8 pt-4 border-t border-zinc-100 flex items-center gap-1.5 text-[11px] text-zinc-600 font-semibold">
+<span class="material-symbols-outlined text-[14px] text-zinc-950">verified_user</span> Instant Legal Enforcement
+        </div>
+</div>
+</div>
+</div>
+</section>
+<!-- KEY PERFORMANCE & TRUST METRICS BAR (Obsidian Black Luxury Card) -->
+<section class="w-full py-24 px-8 bg-white">
+<div class="max-w-[1360px] mx-auto bg-black rounded-3xl p-12 lg:p-16 text-white shadow-2xl relative overflow-hidden border border-zinc-800">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 relative z-10">
+<div class="flex flex-col items-start border-l border-zinc-800 pl-6">
+<span class="text-4xl sm:text-5xl font-extrabold text-white leading-none tracking-tight">42,800+</span>
+<span class="text-sm text-zinc-200 mt-3 font-semibold">Permits Issued</span>
+<span class="text-xs text-zinc-500 mt-1">Across 14 municipal districts</span>
+</div>
+<div class="flex flex-col items-start border-l border-zinc-800 pl-6">
+<span class="text-4xl sm:text-5xl font-extrabold text-white leading-none tracking-tight">98.4%</span>
+<span class="text-sm text-zinc-200 mt-3 font-semibold">First-Time Acceptance</span>
+<span class="text-xs text-zinc-500 mt-1">Via automated intake validation</span>
+</div>
+<div class="flex flex-col items-start border-l border-zinc-800 pl-6">
+<span class="text-4xl sm:text-5xl font-extrabold text-white leading-none tracking-tight">4.8 Days</span>
+<span class="text-sm text-zinc-200 mt-3 font-semibold">Mean Adjudication</span>
+<span class="text-xs text-zinc-500 mt-1">Down from standard 31-day paper SLA</span>
+</div>
+<div class="flex flex-col items-start border-l border-zinc-800 pl-6">
+<span class="text-4xl sm:text-5xl font-extrabold text-white leading-none tracking-tight">100%</span>
+<span class="text-sm text-zinc-200 mt-3 font-semibold">Statutory Compliance</span>
+<span class="text-xs text-zinc-500 mt-1">Direct municipal treasury backing</span>
+</div>
+</div>
+</div>
+</section>
+<!-- "WHY BIZPERMIT?" DUAL-TONE FEATURE SHOWCASE -->
+<section class="w-full py-28 px-8 bg-zinc-50 border-y border-zinc-200/80">
+<div class="max-w-[1360px] mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+<!-- Left: Rich Editorial Visual (Grayscale filtered) -->
+<div class="lg:col-span-5 relative">
+<div class="relative rounded-3xl overflow-hidden border border-zinc-300 shadow-md bg-zinc-900 h-[480px]">
+<img class="w-full h-full object-cover grayscale contrast-110" data-alt="Modern serene municipal administrative headquarters interior featuring warm limestone walls, large glass windows with evergreen pine tree views, elegant timber furnishings, quiet sunlight casting architectural shadows, capturing high institutional trust and sophisticated civic commerce." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAq5_GLbzFWKI4TcWiyf2xnb55AZmO3i9BjtvlCqz8G2BvYfmW1xgpLWdqcULzMDZkuhv4qDCAieVfAxVAOryErWoLWZWDmXSxpBgyBS23Su5XeS9zGiPm237-6fCk_SUVG-aEUiO2ww0zrdaBo0TrBbgtjV5UmPhoGYqe-9ThYOyc9yExQQNM2Xxd_Cms0Ij6TJy9DrZJcTG5WfRIDpKUo5Kfz1UFYmxuW01oEqg">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<!-- Inset Badge -->
+<div class="absolute bottom-6 left-6 right-6 p-5 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-zinc-950 text-[24px]">verified_user</span>
+<div>
+<h4 class="text-xs font-bold text-zinc-950">Standardized Civic Quality</h4>
+<p class="text-[11px] text-zinc-500">Validated through statutory government charter</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-bold text-zinc-900 uppercase px-2 py-1 rounded bg-zinc-100">ISO 27001</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: The Comparison & Features -->
+<div class="lg:col-span-7 flex flex-col gap-8">
+<div>
+<span class="text-xs font-bold uppercase tracking-widest text-zinc-400">Comparative Advantage</span>
+<h2 class="text-3xl sm:text-4xl font-extrabold text-zinc-950 mt-2 tracking-tight">
+            Less Confusion. Total Transparency.
+          </h2>
+<p class="text-base text-zinc-500 mt-3 leading-relaxed">
+            Traditional municipal filings are plagued by opaque physical desks, unpredictable processing times, and lost records. BizPermit replaces bureaucratic obscurity with audited certainty.
+          </p>
+</div>
+<!-- Comparison Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Traditional Legacy Way -->
+<div class="p-6 rounded-2xl bg-white border border-zinc-200 flex flex-col gap-2">
+<div class="flex items-center gap-2 text-zinc-950 font-bold text-xs uppercase tracking-wider">
+<span class="material-symbols-outlined text-[18px] text-zinc-400">cancel</span>
+<span class="">Conventional Municipal Desks</span>
+</div>
+<ul class="space-y-2.5 pt-2 text-xs text-zinc-500">
+<li class="flex items-start gap-2">
+<span class="text-zinc-400 font-bold">•</span>
+<span class="">Unrecorded filing queues lasting 3–8 weeks without status feedback</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-zinc-400 font-bold">•</span>
+<span class="">In-person notarizations and multi-agency cross-town transits</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-zinc-400 font-bold">•</span>
+<span class="">Surprise renewal expirations leading to statutory commercial fines</span>
+</li>
+</ul>
+</div>
+<!-- The BizPermit Standard -->
+<div class="p-6 rounded-2xl bg-black text-white border border-black flex flex-col gap-2">
+<div class="flex items-center gap-2 text-white font-bold text-xs uppercase tracking-wider">
+<span class="material-symbols-outlined text-[18px] text-zinc-200">check_circle</span>
+<span class="">The BizPermit Standard</span>
+</div>
+<ul class="space-y-2.5 pt-2 text-xs text-zinc-300">
+<li class="flex items-start gap-2">
+<span class="text-white font-bold">•</span>
+<span class="">Direct API linkage into city licensing records with minute-by-minute logs</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-white font-bold">•</span>
+<span class="">Pre-screened electronic signatures recognized under municipal charters</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="text-white font-bold">•</span>
+<span class="">Automated 90-day renewal warnings with one-tap statutory renewal</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Document Validator Feature Highlight -->
+<div class="p-6 rounded-2xl bg-white border border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-900 shrink-0">
+<span class="material-symbols-outlined text-[20px]">fact_check</span>
+</div>
+<div>
+<h4 class="text-xs font-bold text-zinc-950 uppercase tracking-wide">Proactive Prerequisite Check</h4>
+<p class="text-xs text-zinc-500 mt-0.5">Check which documents you need before paying any municipal fees.</p>
+</div>
+</div>
+<button class="shrink-0 px-5 py-2.5 rounded-full bg-zinc-100 hover:bg-black hover:text-white text-zinc-900 text-xs font-semibold border border-zinc-200 hover:border-black transition-all" type="button">
+            Verify Requirements
+          </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- MUNICIPAL PARTNERSHIPS & TESTIMONIAL PRESTIGE -->
+<section class="w-full py-28 px-8 bg-white border-b border-zinc-100">
+<div class="max-w-[1360px] mx-auto">
+<div class="text-center max-w-xl mx-auto mb-20">
+<span class="text-xs font-bold uppercase tracking-widest text-zinc-400">Voices of Enterprise Operators</span>
+<h2 class="text-3xl font-extrabold text-zinc-950 mt-2 tracking-tight">Trusted by Local Businesses &amp; Civic Treasuries</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white p-8 rounded-2xl border border-zinc-200 flex flex-col justify-between">
+<p class="text-sm text-zinc-600 leading-relaxed italic">
+          “Opening our second roastery required simultaneous zoning variance permits and food service licensure. BizPermit consolidated 4 municipal bodies into one unified dashboard.”
+        </p>
+<div class="pt-8 border-t border-zinc-100 mt-6 flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-900 font-bold text-xs">
+            MK
+          </div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-zinc-950">Marcus Vance</span>
+<span class="text-[11px] text-zinc-400">Founder, Hearthstone Coffee Roasters</span>
+</div>
+</div>
+</div>
+<div class="bg-white p-8 rounded-2xl border border-zinc-200 flex flex-col justify-between">
+<p class="text-sm text-zinc-600 leading-relaxed italic">
+          “The field inspector logs updated in real time. We knew precisely when our ventilation certification was recorded without making a single telephone call to City Hall.”
+        </p>
+<div class="pt-8 border-t border-zinc-100 mt-6 flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-900 font-bold text-xs">
+            TL
+          </div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-zinc-950">Talia Lin</span>
+<span class="text-[11px] text-zinc-400">Operations Director, Horizon Biotech Lab</span>
+</div>
+</div>
+</div>
+<div class="bg-white p-8 rounded-2xl border border-zinc-200 flex flex-col justify-between">
+<p class="text-sm text-zinc-600 leading-relaxed italic">
+          “Annual commercial license renewals used to derail our accounting department every Q1. BizPermit’s automated dispatch turned a 3-week struggle into a 4-minute click.”
+        </p>
+<div class="pt-8 border-t border-zinc-100 mt-6 flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-900 font-bold text-xs">
+            DS
+          </div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-zinc-950">Devon Stirling</span>
+<span class="text-[11px] text-zinc-400">General Counsel, Apex Logistics Group</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FINAL REASSURANCE CTA -->
+<section class="w-full py-28 px-8 bg-zinc-50" id="faq">
+<div class="max-w-[1360px] mx-auto bg-white rounded-3xl p-12 lg:p-20 border border-zinc-200 shadow-sm relative overflow-hidden">
+<div class="relative z-10 max-w-2xl flex flex-col items-start gap-6">
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 bg-zinc-50">
+<span class="w-2 h-2 rounded-full bg-black"></span>
+<span class="text-[11px] font-semibold text-zinc-800 uppercase tracking-widest">Ready for Public Submission</span>
+</div>
+<h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-950 leading-tight tracking-tight">
+        Ready to launch your commercial filing?
+      </h2>
+<p class="text-base text-zinc-500 leading-relaxed">
+        Complete the municipal eligibility audit in under three minutes. Review your statutory prerequisites free of cost with zero registration barriers.
+      </p>
+<div class="flex flex-wrap items-center gap-4 pt-2">
+<button class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-black text-white text-xs font-semibold tracking-wider uppercase hover:bg-zinc-800 shadow-sm transition-all" type="button">
+<span class="">Audit Your Licensing Prerequisites</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+<a class="inline-flex items-center gap-2 px-7 py-4 rounded-full bg-white text-zinc-900 border border-zinc-300 text-xs font-semibold tracking-wider uppercase hover:border-black transition-colors" href="#">
+<span class="material-symbols-outlined text-[16px] text-zinc-600">support_agent</span>
+<span class="">Speak to a Municipal Clerk</span>
+</a>
+</div>
+<div class="flex flex-wrap items-center gap-8 pt-4 border-t border-zinc-100 text-xs font-medium text-zinc-500">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-zinc-950 text-[16px]">check</span>
+<span class="">Zero Advance Fees</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-zinc-950 text-[16px]">check</span>
+<span class="">Guaranteed Statutory SLA</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-zinc-950 text-[16px]">check</span>
+<span class="">Official Treasury Seal</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- COMPREHENSIVE MONOCHROME FOOTER -->
+<footer class="w-full bg-white border-t border-zinc-200">
+<div class="max-w-[1360px] mx-auto px-8 py-20">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 pb-16 border-b border-zinc-100">
+<div class="md:col-span-2 space-y-5">
+<div class="flex items-center gap-2.5">
+<div class="w-2 h-2 rounded-full bg-zinc-950"></div>
+<span class="text-xs font-bold text-zinc-950 uppercase tracking-wider">Registry Operational Status: Tier-1 Verified</span>
+</div>
+<p class="text-xs text-zinc-500 leading-relaxed max-w-md">
+          Official metropolitan enterprise compliance architecture. BizPermit orchestrates statutory filings, tax clearances, and zonal accreditations across verified municipal jurisdictions.
+        </p>
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 bg-zinc-50 text-zinc-600 text-xs font-medium">
+<span class="material-symbols-outlined text-[16px] text-zinc-900">verified_user</span>
+<span class="">256-Bit Encrypted Municipal Treasury Vault Integration</span>
+</div>
+</div>
+<div>
+<h4 class="text-xs font-bold text-zinc-950 uppercase tracking-wider mb-5">Framework</h4>
+<ul class="space-y-3 text-xs text-zinc-500">
+<li class="hover:text-black cursor-pointer transition-colors">Commercial Registries</li>
+<li class="hover:text-black cursor-pointer transition-colors">Zoning Clearance APIs</li>
+<li class="hover:text-black cursor-pointer transition-colors">Statutory Audit Logs</li>
+<li class="hover:text-black cursor-pointer transition-colors">Fiscal Ledger Verification</li>
+</ul>
+</div>
+<div>
+<h4 class="text-xs font-bold text-zinc-950 uppercase tracking-wider mb-5">Governance</h4>
+<ul class="space-y-3 text-xs text-zinc-500">
+<li class="hover:text-black cursor-pointer transition-colors">Municipal Statutes</li>
+<li class="hover:text-black cursor-pointer transition-colors">Privacy Charter</li>
+<li class="hover:text-black cursor-pointer transition-colors">Accessibility Standards</li>
+<li class="hover:text-black cursor-pointer transition-colors">Intergovernmental Accords</li>
+</ul>
+</div>
+</div>
+<div class="pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+<p class="text-xs text-zinc-400">
+        © 2026 BizPermit Civic Architecture. Academic Prototype Disclosure: Built for administrative regulatory validation and research demonstrations. Non-statutory sandbox environment.
+      </p>
+<div class="flex items-center gap-6 text-xs font-semibold text-zinc-600 shrink-0">
+<span class="">ISO 27001 Protocol</span>
+<span class="">SOC-2 Type II Certified</span>
+<span class="">FIPS 140-3 Compliant</span>
+</div>
+</div>
+</div>
+</footer>
+<script>
+  // Simple micro-interaction for active category filter chips
+  document.querySelectorAll('#search-anchor button').forEach(button => {
+    button.addEventListener('click', () => {
+      button.classList.toggle('bg-black');
+      button.classList.toggle('text-white');
+    });
+  });
+</script>
+
+
+</body></html>
