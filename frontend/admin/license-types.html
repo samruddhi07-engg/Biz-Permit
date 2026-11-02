@@ -1,0 +1,365 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>License Types Catalog — BizPermit Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:2rem;">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+              <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Catalog Management</span>
+              <span class="badge" style="background:rgba(0,107,97,0.1);color:var(--primary);font-size:0.65rem;">MySQL + Neo4j + Redis Cache</span>
+            </div>
+            <h1 style="font-size:1.875rem;margin-top:0.25rem;">License Types</h1>
+            <p style="color:var(--text-secondary);">Manage municipal permits, regulatory requirements, processing SLAs, and fee structures.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openLicenseModal()">
+            <span class="material-symbols-outlined" style="font-size:15px;">add</span> Add License Type
+          </button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="card" style="padding:1rem 1.25rem;margin-bottom:1.5rem;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:1rem;align-items:center;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:0.25rem;">Search Title or Code</label>
+              <input type="text" id="filter-search" class="form-control" placeholder="Search by name/code..." oninput="filterLicenses()">
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:0.25rem;">Department</label>
+              <select id="filter-department" class="form-control" onchange="filterLicenses()">
+                <option value="">All Departments</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:0.25rem;">Status</label>
+              <select id="filter-status" class="form-control" onchange="filterLicenses()">
+                <option value="">All Statuses</option>
+                <option value="active" selected>Active Only</option>
+                <option value="inactive">Inactive Only</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border-default);display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="font-size:0.95rem;font-weight:700;margin:0;">Configured License Definitions (<span id="total-count">0</span>)</h3>
+            <span id="cache-indicator" class="badge" style="background:#f1f5f9;color:#64748b;font-size:0.7rem;">Checking Source...</span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" style="width:100%;">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>License Title</th>
+                  <th>Department</th>
+                  <th>Fee</th>
+                  <th>Validity</th>
+                  <th>SLA</th>
+                  <th>Inspection</th>
+                  <th>Status</th>
+                  <th style="text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="licenses-table-body">
+                <tr><td colspan="9" style="text-align:center;padding:3rem;color:var(--text-muted);">Loading license specifications...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div id="license-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:620px;">
+      <div class="modal-header">
+        <h3 id="modal-title" style="font-size:1.1rem;font-weight:700;">Add License Type</h3>
+        <button class="modal-close" onclick="closeLicenseModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="license-form" onsubmit="event.preventDefault(); saveLicense();">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="license-code">Unique Code *</label>
+              <input type="text" id="license-code" class="form-control" placeholder="e.g. FSSAI-R2" required style="text-transform:uppercase;">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="license-name">License Title *</label>
+              <input type="text" id="license-name" class="form-control" placeholder="e.g. Food Safety Operation Permit" required>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="license-dept">Department *</label>
+              <select id="license-dept" class="form-control" required>
+                <option value="">Select Department</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="license-fee">Statutory Fee (INR) *</label>
+              <input type="number" id="license-fee" class="form-control" min="0" step="50" placeholder="1500" required>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="license-validity">Validity (Months) *</label>
+              <input type="number" id="license-validity" class="form-control" min="1" max="120" value="12" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="license-sla">SLA (Days) *</label>
+              <input type="number" id="license-sla" class="form-control" min="1" max="90" value="14" required>
+            </div>
+            <div class="form-group" style="display:flex;flex-direction:column;justify-content:center;margin-top:0.75rem;">
+              <label class="form-label" style="margin-bottom:0.5rem;">Inspection</label>
+              <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;cursor:pointer;">
+                <input type="checkbox" id="license-inspection"> Requires Audit
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="license-desc">Description & Purpose</label>
+            <textarea id="license-desc" class="form-control" rows="2" placeholder="Summary of who needs this permit and legal justification..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="license-criteria">Eligibility Criteria</label>
+            <textarea id="license-criteria" class="form-control" rows="2" placeholder="Applicant eligibility, turnover thresholds, zoning restrictions..."></textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" id="license-active" checked> Permit Definition Active & Available for Application
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeLicenseModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveLicense()" id="save-license-btn">Save Specification</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let allLicenses = [];
+    let allDepartments = [];
+    let editLicenseId = null;
+
+    async function initPage() {
+      const user = requireAuth('ADMIN');
+      if (!user) return;
+      renderSidebar('license-types', 'ADMIN');
+      renderTopbar();
+
+      await loadDepartments();
+      await loadLicenses();
+    }
+
+    async function loadDepartments() {
+      try {
+        const res = await api.get('/departments');
+        allDepartments = res.data || [];
+        const filterSelect = document.getElementById('filter-department');
+        const modalSelect = document.getElementById('license-dept');
+
+        filterSelect.innerHTML = '<option value="">All Departments</option>' +
+          allDepartments.map(d => `<option value="${d.id}">${escapeHtml(d.name)} (${d.code})</option>`).join('');
+
+        modalSelect.innerHTML = '<option value="">Select Department</option>' +
+          allDepartments.map(d => `<option value="${d.id}">${escapeHtml(d.name)} (${d.code})</option>`).join('');
+      } catch (err) {
+        console.error('Failed to load departments', err);
+      }
+    }
+
+    async function loadLicenses() {
+      try {
+        const res = await api.get('/license-types?isActive=');
+        allLicenses = res.data || [];
+        
+        const cacheBadge = document.getElementById('cache-indicator');
+        if (res.source === 'cache') {
+          cacheBadge.style.background = '#e0f2fe';
+          cacheBadge.style.color = '#0369a1';
+          cacheBadge.textContent = 'Redis Cached';
+        } else {
+          cacheBadge.style.background = '#ecfdf5';
+          cacheBadge.style.color = '#065f46';
+          cacheBadge.textContent = 'MySQL Live';
+        }
+
+        renderTable(allLicenses);
+      } catch (err) {
+        showToast('Error loading licenses: ' + err.message, 'error');
+        document.getElementById('licenses-table-body').innerHTML = 
+          '<tr><td colspan="9" style="text-align:center;padding:3rem;color:var(--danger);">Failed to load license specifications.</td></tr>';
+      }
+    }
+
+    function renderTable(list) {
+      document.getElementById('total-count').textContent = list.length;
+      const tbody = document.getElementById('licenses-table-body');
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:3rem;color:var(--text-muted);">No license types match your search criteria.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(l => `
+        <tr>
+          <td><strong style="font-family:monospace;color:var(--primary);">${escapeHtml(l.code)}</strong></td>
+          <td>
+            <div style="font-weight:600;color:var(--text-primary);">${escapeHtml(l.name)}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">${escapeHtml((l.description || '').substring(0, 60))}${l.description && l.description.length > 60 ? '...' : ''}</div>
+          </td>
+          <td><span class="badge" style="background:#f1f5f9;color:#334155;">${escapeHtml(l.department_name || l.department_code || '-')}</span></td>
+          <td style="font-weight:600;">₹${Number(l.fee || 0).toLocaleString()}</td>
+          <td>${l.validity_months} mos</td>
+          <td>${l.processing_sla_days} days</td>
+          <td>
+            ${l.requires_inspection 
+              ? '<span class="badge badge-warning" style="font-size:0.7rem;">Required</span>' 
+              : '<span class="badge" style="background:#f1f5f9;color:#64748b;font-size:0.7rem;">Exempt</span>'}
+          </td>
+          <td>
+            ${l.is_active 
+              ? '<span class="badge badge-success" style="font-size:0.7rem;">Active</span>' 
+              : '<span class="badge badge-error" style="font-size:0.7rem;">Inactive</span>'}
+          </td>
+          <td style="text-align:right;">
+            <button class="btn btn-sm btn-secondary" onclick="editLicense(${l.id})" title="Edit License">
+              <span class="material-symbols-outlined" style="font-size:14px;">edit</span>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterLicenses() {
+      const q = (document.getElementById('filter-search').value || '').toLowerCase();
+      const dept = document.getElementById('filter-department').value;
+      const status = document.getElementById('filter-status').value;
+
+      const filtered = allLicenses.filter(l => {
+        const matchesQ = !q || l.name.toLowerCase().includes(q) || l.code.toLowerCase().includes(q);
+        const matchesDept = !dept || String(l.department_id) === String(dept);
+        const matchesStatus = !status || (status === 'active' && l.is_active) || (status === 'inactive' && !l.is_active);
+        return matchesQ && matchesDept && matchesStatus;
+      });
+
+      renderTable(filtered);
+    }
+
+    function openLicenseModal(license = null) {
+      editLicenseId = license ? license.id : null;
+      document.getElementById('modal-title').textContent = license ? 'Edit License Type' : 'Add License Type';
+      document.getElementById('license-code').value = license ? license.code : '';
+      document.getElementById('license-code').disabled = !!license;
+      document.getElementById('license-name').value = license ? license.name : '';
+      document.getElementById('license-dept').value = license ? license.department_id : '';
+      document.getElementById('license-fee').value = license ? license.fee : 1500;
+      document.getElementById('license-validity').value = license ? license.validity_months : 12;
+      document.getElementById('license-sla').value = license ? license.processing_sla_days : 14;
+      document.getElementById('license-inspection').checked = license ? !!license.requires_inspection : false;
+      document.getElementById('license-desc').value = license ? (license.description || '') : '';
+      document.getElementById('license-criteria').value = license ? (license.eligibility_criteria || '') : '';
+      document.getElementById('license-active').checked = license ? (license.is_active !== false) : true;
+
+      document.getElementById('license-modal').style.display = 'flex';
+    }
+
+    function closeLicenseModal() {
+      document.getElementById('license-modal').style.display = 'none';
+      editLicenseId = null;
+    }
+
+    function editLicense(id) {
+      const license = allLicenses.find(l => l.id === id);
+      if (license) openLicenseModal(license);
+    }
+
+    async function saveLicense() {
+      const code = document.getElementById('license-code').value.trim();
+      const name = document.getElementById('license-name').value.trim();
+      const departmentId = document.getElementById('license-dept').value;
+      const fee = parseFloat(document.getElementById('license-fee').value);
+      const validityMonths = parseInt(document.getElementById('license-validity').value, 10);
+      const processingSlaDays = parseInt(document.getElementById('license-sla').value, 10);
+      const requiresInspection = document.getElementById('license-inspection').checked;
+      const description = document.getElementById('license-desc').value.trim();
+      const eligibilityCriteria = document.getElementById('license-criteria').value.trim();
+      const isActive = document.getElementById('license-active').checked;
+
+      if (!code || !name || !departmentId) {
+        showToast('Please fill in all required fields.', 'warning');
+        return;
+      }
+
+      const payload = {
+        code,
+        name,
+        departmentId: parseInt(departmentId, 10),
+        fee,
+        validityMonths,
+        processingSlaDays,
+        requiresInspection,
+        description,
+        eligibilityCriteria,
+        isActive
+      };
+
+      const btn = document.getElementById('save-license-btn');
+      btn.disabled = true;
+      btn.textContent = 'Syncing Neo4j & MySQL...';
+
+      try {
+        if (editLicenseId) {
+          await api.put(`/admin/license-types/${editLicenseId}`, payload);
+          showToast('License definition updated & graph synchronized!', 'success');
+        } else {
+          await api.post('/admin/license-types', payload);
+          showToast('New license created, graph synced & cache primed!', 'success');
+        }
+        closeLicenseModal();
+        await loadLicenses();
+      } catch (err) {
+        showToast('Save failed: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Specification';
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]);
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>

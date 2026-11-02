@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Applications — BizPermit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+
+      <main class="dashboard-content">
+        
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1.5rem; margin-bottom: 2rem;">
+          <div>
+            <h1 style="font-size: 2rem; margin-bottom: 0.25rem;">My Permit Filings</h1>
+            <p>Track live intake adjudication, officer assignments, and statutory approvals.</p>
+          </div>
+          <a href="/owner/apply.html" class="btn btn-primary" style="display:flex;align-items:center;gap:6px;">
+            <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+            <span>New Application</span>
+          </a>
+        </div>
+
+        <!-- Filter & Search Card -->
+        <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+          <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;">
+            
+            <!-- Status Tabs -->
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;" id="status-tabs">
+              <button onclick="setTab('')" class="btn btn-primary btn-sm tab-btn active" data-status="">All Filings</button>
+              <button onclick="setTab('UNDER_REVIEW')" class="btn btn-secondary btn-sm tab-btn" data-status="UNDER_REVIEW">Under Review</button>
+              <button onclick="setTab('CORRECTION_REQUIRED')" class="btn btn-secondary btn-sm tab-btn" data-status="CORRECTION_REQUIRED">Action Required</button>
+              <button onclick="setTab('INSPECTION_REQUIRED')" class="btn btn-secondary btn-sm tab-btn" data-status="INSPECTION_REQUIRED">Inspection</button>
+              <button onclick="setTab('APPROVED')" class="btn btn-secondary btn-sm tab-btn" data-status="APPROVED">Approved</button>
+              <button onclick="setTab('DRAFT')" class="btn btn-secondary btn-sm tab-btn" data-status="DRAFT">Drafts</button>
+            </div>
+
+            <!-- Search input -->
+            <div style="position: relative; min-width: 260px;">
+              <span class="material-symbols-outlined" style="position: absolute; left: 10px; top: 10px; color: var(--text-muted); font-size: 18px;">search</span>
+              <input type="text" id="app-search" oninput="loadApplications()" class="form-control" style="padding-left: 36px; padding-top: 6px; padding-bottom: 6px;" placeholder="Search application # or business...">
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Filing Number</th>
+                  <th>Business Entity</th>
+                  <th>License Framework</th>
+                  <th>Type</th>
+                  <th>Current Status</th>
+                  <th>Filing Date</th>
+                  <th>Last Updated</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="apps-table-body">
+                <tr>
+                  <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 3rem;">Loading permit filings...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let activeStatus = '';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSidebar('applications', 'owner');
+      renderTopbar('My Applications');
+      loadApplications();
+    });
+
+    function setTab(status) {
+      activeStatus = status;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.dataset.status === status) {
+          btn.className = 'btn btn-primary btn-sm tab-btn active';
+        } else {
+          btn.className = 'btn btn-secondary btn-sm tab-btn';
+        }
+      });
+      loadApplications();
+    }
+
+    async function loadApplications() {
+      const search = document.getElementById('app-search').value.trim();
+      const tbody = document.getElementById('apps-table-body');
+
+      const params = {};
+      if (activeStatus) params.status = activeStatus;
+      if (search) params.search = search;
+
+      try {
+        const res = await API.get('/applications', params);
+        if (res.success && res.data) {
+          renderTable(res.data);
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--state-error); padding: 2rem;">Error: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderTable(apps) {
+      const tbody = document.getElementById('apps-table-body');
+      if (apps.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+              No applications match the selected criteria.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = apps.map(a => `
+        <tr>
+          <td class="tabular-nums" style="font-weight: 700; color: var(--text-primary);">
+            <a href="/owner/application-details.html?id=${a.id}" style="color: var(--text-primary); text-decoration: underline;">${a.application_number}</a>
+          </td>
+          <td style="font-weight: 600;">${a.business_name}</td>
+          <td>
+            <div style="font-weight: 600;">${a.license_name}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">${a.department_name}</div>
+          </td>
+          <td>
+            <span class="badge badge-draft" style="font-size: 0.65rem;">${a.application_type}</span>
+          </td>
+          <td>${formatStatusBadge(a.status)}</td>
+          <td class="tabular-nums" style="font-size: 0.8rem; color: var(--text-secondary);">${formatDate(a.submission_date)}</td>
+          <td class="tabular-nums" style="font-size: 0.8rem; color: var(--text-muted);">${formatDate(a.updated_at)}</td>
+          <td>
+            <a href="/owner/application-details.html?id=${a.id}" class="btn btn-secondary btn-sm" style="padding: 4px 10px; font-size: 0.75rem;">
+              <span>Details</span>
+              <span class="material-symbols-outlined" style="font-size: 14px;">arrow_forward</span>
+            </a>
+          </td>
+        </tr>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

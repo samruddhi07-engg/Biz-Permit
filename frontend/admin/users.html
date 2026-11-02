@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management — BizPermit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:2rem;">
+          <div>
+            <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Access Control</span>
+            <h1 style="font-size:1.875rem;margin-top:0.25rem;">User Directory</h1>
+            <p style="color:var(--text-secondary);">Manage accounts, roles, and access for all system users.</p>
+          </div>
+          <a href="/admin/staff.html" class="btn btn-primary btn-sm">
+            <span class="material-symbols-outlined" style="font-size:15px;">person_add</span> Add Staff Member
+          </a>
+        </div>
+        <div class="card" style="padding:1.25rem 1.5rem;margin-bottom:1.5rem;">
+          <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;">
+            <div style="flex:1;min-width:220px;position:relative;">
+              <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--text-muted);">search</span>
+              <input id="user-search" type="text" placeholder="Search by name or email..." class="form-control" style="padding-left:2.5rem;">
+            </div>
+            <select id="role-filter" class="form-control" style="max-width:160px;">
+              <option value="">All Roles</option>
+              <option value="OWNER">Business Owner</option>
+              <option value="OFFICER">Licensing Officer</option>
+              <option value="INSPECTOR">Field Inspector</option>
+              <option value="ADMIN">Administrator</option>
+            </select>
+            <select id="status-filter" class="form-control" style="max-width:160px;">
+              <option value="">All Status</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <div id="user-loading" style="padding:3rem;">
+            <div style="height:45px;border-radius:6px;background:var(--bg-secondary);animation:pulse 1.5s infinite;margin-bottom:0.75rem;"></div>
+            <div style="height:45px;border-radius:6px;background:var(--bg-secondary);animation:pulse 1.5s infinite;margin-bottom:0.75rem;"></div>
+            <div style="height:45px;border-radius:6px;background:var(--bg-secondary);animation:pulse 1.5s infinite;"></div>
+          </div>
+          <div id="user-empty" style="display:none;padding:4rem;text-align:center;">
+            <span class="material-symbols-outlined" style="font-size:48px;color:var(--text-muted);display:block;margin-bottom:1rem;">group</span>
+            <h3 style="font-size:1.1rem;">No users found</h3>
+          </div>
+          <div id="user-table-wrap" style="display:none;overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Registered</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="user-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="role-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:400px;">
+      <div class="modal-header">
+        <h3 style="font-size:1rem;font-weight:700;">Change User Role</h3>
+        <button class="modal-close" onclick="document.getElementById('role-modal').style.display='none'">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="role-modal-desc" style="font-size:0.875rem;margin-bottom:1rem;"></p>
+        <div class="form-group">
+          <label class="form-label" for="new-role">New Role</label>
+          <select id="new-role" class="form-control">
+            <option value="OWNER">Business Owner</option>
+            <option value="OFFICER">Licensing Officer</option>
+            <option value="INSPECTOR">Field Inspector</option>
+            <option value="ADMIN">Administrator</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="document.getElementById('role-modal').style.display='none'">Cancel</button>
+        <button class="btn btn-primary" id="role-confirm-btn">Update Role</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let allUsers = [];
+    let roleEditUserId = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await requireAuth('ADMIN');
+      renderSidebar('users','ADMIN');
+      renderTopbar();
+      await loadUsers();
+      document.getElementById('user-search').addEventListener('input', applyFilters);
+      document.getElementById('role-filter').addEventListener('change', applyFilters);
+      document.getElementById('status-filter').addEventListener('change', applyFilters);
+      document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.style.display='none'; }));
+
+      document.getElementById('role-confirm-btn').addEventListener('click', async () => {
+        if (!roleEditUserId) return;
+        const newRole = document.getElementById('new-role').value;
+        try {
+          const res = await api.put('/api/admin/users/' + roleEditUserId + '/role', { role: newRole });
+          if (res.success) {
+            showToast('User role updated successfully.', 'success');
+            document.getElementById('role-modal').style.display = 'none';
+            await loadUsers();
+          } else throw new Error(res.error?.message);
+        } catch(e) { showToast(e.message || 'Failed to update role.', 'error'); }
+      });
+    });
+
+    async function loadUsers() {
+      try {
+        const res = await api.get('/api/admin/users');
+        document.getElementById('user-loading').style.display = 'none';
+        allUsers = res.success ? (res.data || []) : [];
+        applyFilters();
+      } catch(e) {
+        document.getElementById('user-loading').style.display = 'none';
+        document.getElementById('user-empty').style.display = 'block';
+      }
+    }
+
+    function applyFilters() {
+      const s = document.getElementById('user-search').value.toLowerCase();
+      const r = document.getElementById('role-filter').value;
+      const st = document.getElementById('status-filter').value;
+      const filtered = allUsers.filter(u => {
+        const name = ((u.first_name||'') + ' ' + (u.last_name||'')).toLowerCase();
+        const email = (u.email||'').toLowerCase();
+        return (!s || name.includes(s) || email.includes(s))
+          && (!r || (u.roles||[u.role]).includes(r))
+          && (st === '' || String(u.is_active ?? 1) === st);
+      });
+      renderTable(filtered);
+    }
+
+    const roleColors = {OWNER:'badge-success',OFFICER:'badge-warning',INSPECTOR:'',ADMIN:'badge-error'};
+
+    function renderTable(users) {
+      if (!users.length) {
+        document.getElementById('user-empty').style.display = 'block';
+        document.getElementById('user-table-wrap').style.display = 'none';
+        return;
+      }
+      document.getElementById('user-empty').style.display = 'none';
+      document.getElementById('user-table-wrap').style.display = 'block';
+      document.getElementById('user-tbody').innerHTML = users.map(u => {
+        const name = ((u.first_name||'') + ' ' + (u.last_name||'')).trim() || 'Unknown';
+        const roles = u.roles || [u.role] || ['OWNER'];
+        const isActive = u.is_active !== 0;
+        const initials = (name.split(' ').map(w=>w[0]).join('').substring(0,2)||'U').toUpperCase();
+        return `<tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <div style="width:36px;height:36px;background:var(--bg-obsidian);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:800;font-family:var(--font-heading);flex-shrink:0;">${initials}</div>
+              <div><div style="font-weight:600;font-size:0.875rem;">${name}</div><div style="font-size:0.7rem;color:var(--text-muted);">#${String(u.id).padStart(5,'0')}</div></div>
+            </div>
+          </td>
+          <td style="font-size:0.85rem;">${u.email||'—'}</td>
+          <td>${roles.map(r => `<span class="badge ${roleColors[r]||''}" style="margin-right:4px;">${r}</span>`).join('')}</td>
+          <td style="font-size:0.8rem;">${u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN') : '—'}</td>
+          <td>${isActive ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-error">Inactive</span>'}</td>
+          <td>
+            <div style="display:flex;gap:0.5rem;">
+              <button class="btn btn-secondary btn-sm" onclick="openRoleModal(${u.id},'${name}')" title="Change Role">
+                <span class="material-symbols-outlined" style="font-size:15px;">manage_accounts</span>
+              </button>
+              <button class="btn btn-sm" style="background:${isActive?'#fee2e2':'#d1fae5'};color:${isActive?'#991b1b':'#065f46'};border:1px solid ${isActive?'#fca5a5':'#6ee7b7'};" onclick="toggleActive(${u.id},${isActive})" title="${isActive?'Deactivate':'Activate'}">
+                <span class="material-symbols-outlined" style="font-size:15px;">${isActive?'block':'check_circle'}</span>
+              </button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function openRoleModal(userId, name) {
+      roleEditUserId = userId;
+      document.getElementById('role-modal-desc').textContent = `Change role for ${name}`;
+      document.getElementById('role-modal').style.display = 'flex';
+    }
+
+    async function toggleActive(userId, currentActive) {
+      try {
+        const res = await api.put('/api/admin/users/' + userId + '/toggle-status', {});
+        if (res.success) {
+          showToast('User status updated.', 'success');
+          await loadUsers();
+        } else throw new Error(res.error?.message);
+      } catch(e) { showToast(e.message || 'Failed.', 'error'); }
+    }
+  </script>
+</body>
+</html>

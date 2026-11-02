@@ -1,0 +1,287 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>License Details — BizPermit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/animations.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/components.css">
+</head>
+<body>
+
+  <header id="public-header" class="public-header"></header>
+
+  <main style="padding: 3.5rem 0 5rem; flex: 1;">
+    <div class="container">
+      
+      <!-- Breadcrumb -->
+      <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted);">
+        <a href="/" style="color: var(--text-secondary);">Home</a>
+        <span>/</span>
+        <a href="/licenses.html" style="color: var(--text-secondary);">Licenses</a>
+        <span>/</span>
+        <span id="breadcrumb-title" style="color: var(--text-primary); font-weight: 600;">Loading...</span>
+      </div>
+
+      <div id="loading-state" style="padding: 4rem; text-align: center; color: var(--text-secondary);">
+        Loading statutory specifications...
+      </div>
+
+      <div id="details-content" style="display: none;">
+        
+        <!-- Header Banner -->
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border-default); margin-bottom: 2.5rem;">
+          <div style="max-width: 800px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem;">
+              <span id="detail-code" class="badge badge-draft" style="font-size: 0.85rem; font-weight: 700;"></span>
+              <span id="detail-inspection-badge"></span>
+            </div>
+            <h1 id="detail-name" style="font-size: 2.25rem; margin-bottom: 0.75rem;"></h1>
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 600; color: var(--accent-teal);">
+              <span class="material-symbols-outlined" style="font-size: 18px;">account_balance</span>
+              <span id="detail-dept"></span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 1rem;">
+            <a id="apply-btn" href="#" class="btn btn-primary btn-lg" style="box-shadow: 0 4px 14px rgba(0,0,0,0.12);">
+              <span>Apply for this License</span>
+              <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+            </a>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Prerequisite check performed during intake</span>
+          </div>
+        </div>
+
+        <div class="details-grid">
+          
+          <!-- Left Column: Specs, Eligibility, Requirements -->
+          <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+            
+            <!-- Description -->
+            <div>
+              <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem;">Statutory Description</h3>
+              <p id="detail-desc" style="font-size: 0.95rem; line-height: 1.7;"></p>
+            </div>
+
+            <!-- Eligibility -->
+            <div class="card">
+              <h4 style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: var(--accent-teal);">gavel</span>
+                <span>Eligibility &amp; Qualification Criteria</span>
+              </h4>
+              <p id="detail-eligibility" style="font-size: 0.9rem; line-height: 1.6;"></p>
+            </div>
+
+            <!-- Required Documents Checklist -->
+            <div>
+              <h3 style="font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: var(--accent-teal);">folder_open</span>
+                <span>Mandatory Supporting Documents</span>
+              </h3>
+              <div id="requirements-list" style="display: flex; flex-direction: column; gap: 0.85rem;">
+                <!-- Requirements rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Neo4j Graph Dependencies & Related Licenses -->
+            <div class="card" style="border-left: 4px solid var(--accent-teal); background-color: #fafbfc;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <h4 style="display: flex; align-items: center; gap: 8px;">
+                  <span class="material-symbols-outlined" style="color: var(--accent-teal);">hub</span>
+                  <span>Neo4j Regulatory Dependencies &amp; Prerequisites</span>
+                </h4>
+                <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Neo4j Graph Engine</span>
+              </div>
+              
+              <div id="neo4j-dependencies-container">
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">Querying graph relationships...</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Quick Stats Card -->
+          <div>
+            <div class="card" style="position: sticky; top: 100px;">
+              <h4 style="margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-light);">
+                Permit Schedule Summary
+              </h4>
+
+              <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.85rem; color: var(--text-secondary);">Application Fee:</span>
+                  <span id="detail-fee" style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800;"></span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.85rem; color: var(--text-secondary);">Validity Period:</span>
+                  <span id="detail-validity" style="font-weight: 700; font-size: 0.95rem;"></span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.85rem; color: var(--text-secondary);">Turnaround SLA:</span>
+                  <span id="detail-sla" style="font-weight: 700; font-size: 0.95rem;"></span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 0.85rem; color: var(--text-secondary);">Inspection:</span>
+                  <span id="detail-inspection-text" style="font-weight: 700; font-size: 0.85rem;"></span>
+                </div>
+
+                <div style="padding-top: 1rem; border-top: 1px solid var(--border-light);">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 0.5rem;">
+                    Applicable Commercial Sectors:
+                  </span>
+                  <div id="detail-categories-badges" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+                </div>
+
+                <div style="margin-top: 0.75rem;">
+                  <a id="apply-btn-sidebar" href="#" class="btn btn-primary" style="width: 100%;">
+                    <span>Proceed to Application</span>
+                    <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer id="public-footer" class="public-footer"></footer>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderPublicHeader('licenses');
+      renderPublicFooter();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const licenseId = urlParams.get('id');
+
+      if (!licenseId) {
+        document.getElementById('loading-state').innerHTML = 'Invalid license selection. <a href="/licenses.html">Return to catalog</a>.';
+        return;
+      }
+
+      await loadLicenseDetails(licenseId);
+    });
+
+    async function loadLicenseDetails(id) {
+      try {
+        const res = await API.get(`/license-types/${id}`);
+        if (!res.success || !res.data) {
+          throw new Error('License specifications not found');
+        }
+
+        const l = res.data;
+        document.title = `${l.name} — BizPermit`;
+        document.getElementById('breadcrumb-title').textContent = l.name;
+        document.getElementById('detail-code').textContent = l.code;
+        document.getElementById('detail-name').textContent = l.name;
+        document.getElementById('detail-dept').textContent = l.department_name;
+        document.getElementById('detail-desc').textContent = l.description || 'Statutory municipal regulatory framework.';
+        document.getElementById('detail-eligibility').textContent = l.eligibility_criteria || 'Subject to municipal commercial registry standards and zoning confirmation.';
+        
+        document.getElementById('detail-fee').textContent = formatCurrency(l.fee);
+        document.getElementById('detail-validity').textContent = `${l.validity_months} Months`;
+        document.getElementById('detail-sla').textContent = `${l.processing_sla_days} Business Days`;
+
+        if (l.requires_inspection) {
+          document.getElementById('detail-inspection-badge').innerHTML = '<span class="badge badge-review"><span class="material-symbols-outlined" style="font-size:12px;">fact_check</span> Physical Inspection Required</span>';
+          document.getElementById('detail-inspection-text').textContent = 'Mandatory Field Audit';
+        } else {
+          document.getElementById('detail-inspection-badge').innerHTML = '<span class="badge badge-active">Digital Fast-Track</span>';
+          document.getElementById('detail-inspection-text').textContent = 'Desk Review Only';
+        }
+
+        // Apply Buttons
+        const applyUrl = `/owner/apply.html?licenseTypeId=${l.id}`;
+        document.getElementById('apply-btn').href = applyUrl;
+        document.getElementById('apply-btn-sidebar').href = applyUrl;
+
+        // Categories
+        const catContainer = document.getElementById('detail-categories-badges');
+        catContainer.innerHTML = (l.categories || []).map(c => `
+          <span class="badge badge-draft" style="font-size: 0.7rem;">${c.name}</span>
+        `).join('') || '<span style="font-size:0.8rem;color:#71717a;">All Commercial Outlets</span>';
+
+        // Requirements List
+        const reqList = document.getElementById('requirements-list');
+        if (l.requirements && l.requirements.length > 0) {
+          reqList.innerHTML = l.requirements.map((r, i) => `
+            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 1rem 1.25rem; background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+              <span class="material-symbols-outlined" style="color: var(--accent-teal); font-size: 20px; margin-top: 2px;">description</span>
+              <div style="flex: 1;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                  <span style="font-weight: 700; font-size: 0.9rem;">${r.title}</span>
+                  ${r.is_mandatory ? '<span class="badge badge-correction" style="font-size: 0.65rem;">Mandatory</span>' : '<span class="badge badge-draft" style="font-size: 0.65rem;">Optional</span>'}
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">${r.description || ''}</p>
+                <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem;">Accepted formats: ${r.allowed_extensions.toUpperCase()}</div>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          reqList.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-secondary);">No special document uploads required beyond standard business proof.</p>';
+        }
+
+        // Neo4j Graph Dependencies
+        const neoContainer = document.getElementById('neo4j-dependencies-container');
+        if (l.graphRelationships && l.graphRelationships.prerequisites && l.graphRelationships.prerequisites.length > 0) {
+          neoContainer.innerHTML = `
+            <p style="font-size: 0.85rem; margin-bottom: 0.85rem;">
+              The municipal regulatory code stipulates that this permit has prerequisite dependencies:
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              ${l.graphRelationships.prerequisites.map(p => `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #ffffff; border: 1px solid var(--border-default); border-radius: var(--radius-md);">
+                  <div>
+                    <span style="font-weight: 700; font-size: 0.85rem;">${p.name}</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 6px;">(${p.code})</span>
+                    <div style="font-size: 0.75rem; color: var(--accent-teal);">${p.reason || 'Prerequisite credential'}</div>
+                  </div>
+                  <a href="/license-details.html?id=${p.id}" class="btn btn-secondary btn-sm" style="font-size: 0.7rem;">View Prerequisite</a>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else {
+          neoContainer.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--state-success);">
+              <span class="material-symbols-outlined" style="font-size: 18px;">check_circle</span>
+              <span><strong>Baseline Credential:</strong> No prior prerequisite permits required to apply.</span>
+            </div>
+          `;
+        }
+
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('details-content').style.display = 'block';
+
+      } catch (err) {
+        document.getElementById('loading-state').innerHTML = `<span style="color: var(--state-error);">Error loading license: ${err.message}</span>`;
+      }
+    }
+  </script>
+</body>
+</html>

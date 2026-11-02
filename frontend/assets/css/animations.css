@@ -1,0 +1,199 @@
+/**
+ * BizPermit High-Performance GPU-Accelerated Animations
+ * Designed for 60fps interaction smoothness with zero layout thrashing
+ */
+
+/* ==========================================================
+   1. Keyframe Definitions (Transform & Opacity Only)
+   ========================================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes scaleInSubtle {
+  from {
+    opacity: 0;
+    transform: scale3d(0.96, 0.96, 1);
+  }
+  to {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes drawerSlideIn {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes modalBackdropFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale3d(0.95, 0.95, 1) translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulseMint {
+  0% {
+    box-shadow: 0 0 0 0 rgba(122, 227, 206, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(122, 227, 206, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(122, 227, 206, 0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================
+   2. Micro-Interaction Utility Classes
+   ========================================================== */
+
+.fade-in {
+  animation: fadeIn var(--transition-normal) forwards;
+  will-change: opacity;
+}
+
+.fade-in-up {
+  animation: fadeInUp var(--transition-normal) forwards;
+  will-change: transform, opacity;
+}
+
+.scale-in {
+  animation: scaleInSubtle var(--transition-normal) forwards;
+  will-change: transform, opacity;
+}
+
+/* Card & Button Hover Physics */
+.card-lift {
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  will-change: transform, box-shadow;
+}
+
+.card-lift:hover {
+  transform: translate3d(0, -3px, 0);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--color-border-strong);
+}
+
+.card-lift:active {
+  transform: translate3d(0, -1px, 0);
+  transition-duration: 80ms;
+}
+
+/* Shimmer Skeleton (GPU Accelerated) */
+.skeleton {
+  background: linear-gradient(90deg, #F0F0F3 0%, #E6E6EA 50%, #F0F0F3 100%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.8s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+  will-change: background-position;
+}
+
+/* Interactive Badge Pulse */
+.pulse-mint-dot {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-teal);
+  animation: pulseMint 2s infinite;
+}
+
+/* Spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* ==========================================================
+   3. Reduced Motion Compliance (WCAG 2.1 AA)
+   ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .card-lift:hover {
+    transform: none !important;
+  }
+
+  .skeleton {
+    animation: none !important;
+    background: #E8E8EC !important;
+  }
+}
+

@@ -1,0 +1,365 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics & Reports — BizPermit Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:2rem;">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+              <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Executive Intelligence</span>
+              <span class="badge" style="background:#ede9fe;color:#5b21b6;font-size:0.65rem;border:1px solid #ddd6fe;">MySQL Aggregations + Redis Caching</span>
+            </div>
+            <h1 style="font-size:1.875rem;margin-top:0.25rem;">System Analytics & Reports</h1>
+            <p style="color:var(--text-secondary);">Enterprise metrics on license application demand, category distributions, adjudication trends, and expiry forecasts.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="loadReports()">
+            <span class="material-symbols-outlined" style="font-size:15px;">refresh</span> Refresh Reports
+          </button>
+        </div>
+
+        <!-- Top Metric Highlights -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:1rem;margin-bottom:2rem;">
+          <div class="card" style="padding:1.25rem;">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Sector Coverage</div>
+            <div id="stat-sectors" style="font-size:1.75rem;font-weight:800;color:var(--text-primary);margin-top:0.35rem;">-</div>
+            <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.25rem;">Regulated industry categories</div>
+          </div>
+          <div class="card" style="padding:1.25rem;">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Active Permits Catalog</div>
+            <div id="stat-permit-types" style="font-size:1.75rem;font-weight:800;color:var(--primary);margin-top:0.35rem;">-</div>
+            <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.25rem;">Permit definitions across depts</div>
+          </div>
+          <div class="card" style="padding:1.25rem;">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Decision Velocity</div>
+            <div id="stat-decisions" style="font-size:1.75rem;font-weight:800;color:#0284c7;margin-top:0.35rem;">-</div>
+            <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.25rem;">Adjudications finalized</div>
+          </div>
+          <div class="card" style="padding:1.25rem;">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Upcoming Expirations</div>
+            <div id="stat-expiries" style="font-size:1.75rem;font-weight:800;color:#d97706;margin-top:0.35rem;">-</div>
+            <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.25rem;">Renewals due within 12 months</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid 1: Categories & Volume -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;">
+          <!-- Category Distribution -->
+          <div class="card" style="padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+              <div>
+                <h3 style="font-size:1rem;font-weight:700;margin:0;">Registered Enterprises by Sector</h3>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin:0.15rem 0 0 0;">Proportion of registered businesses across municipal industries</p>
+              </div>
+            </div>
+            <div style="height:280px;position:relative;">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Application Volume by License Type -->
+          <div class="card" style="padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+              <div>
+                <h3 style="font-size:1rem;font-weight:700;margin:0;">Applications by License Classification</h3>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin:0.15rem 0 0 0;">Volume of requests filed per license category</p>
+              </div>
+            </div>
+            <div style="height:280px;position:relative;">
+              <canvas id="volumeChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid 2: Monthly Decisions & Expiry Forecast -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;">
+          <!-- Monthly Approvals vs Rejections -->
+          <div class="card" style="padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+              <div>
+                <h3 style="font-size:1rem;font-weight:700;margin:0;">Monthly Adjudication Decisions</h3>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin:0.15rem 0 0 0;">Approved vs. Rejected permits by calendar month</p>
+              </div>
+            </div>
+            <div style="height:280px;position:relative;">
+              <canvas id="decisionsChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Expiry Timeline -->
+          <div class="card" style="padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+              <div>
+                <h3 style="font-size:1rem;font-weight:700;margin:0;">License Expiry Forecast (Next 12 Mos)</h3>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin:0.15rem 0 0 0;">Anticipated renewal cycles based on issued validity</p>
+              </div>
+            </div>
+            <div style="height:280px;position:relative;">
+              <canvas id="expiryChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabular Aggregations -->
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border-default);">
+            <h3 style="font-size:0.95rem;font-weight:700;margin:0;">License Type Demand Breakdown</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" style="width:100%;">
+              <thead>
+                <tr>
+                  <th>License Title</th>
+                  <th>Total Filed Applications</th>
+                  <th>Relative Share</th>
+                  <th>Trend Status</th>
+                </tr>
+              </thead>
+              <tbody id="table-volume-breakdown">
+                <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-muted);">Loading analytics data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let categoryChartInst = null;
+    let volumeChartInst = null;
+    let decisionsChartInst = null;
+    let expiryChartInst = null;
+
+    async function initPage() {
+      const user = requireAuth('ADMIN');
+      if (!user) return;
+      renderSidebar('reports', 'ADMIN');
+      renderTopbar();
+
+      await loadReports();
+    }
+
+    async function loadReports() {
+      try {
+        const res = await api.get('/admin/reports');
+        const data = res.data;
+
+        renderStats(data);
+        renderCategoryChart(data.categoryDistribution || []);
+        renderVolumeChart(data.licenseTypeVolume || []);
+        renderDecisionsChart(data.monthlyDecisions || []);
+        renderExpiryChart(data.upcomingExpiries || []);
+        renderVolumeTable(data.licenseTypeVolume || []);
+      } catch (err) {
+        showToast('Error loading report analytics: ' + err.message, 'error');
+      }
+    }
+
+    function renderStats(data) {
+      document.getElementById('stat-sectors').textContent = (data.categoryDistribution || []).length;
+      document.getElementById('stat-permit-types').textContent = (data.licenseTypeVolume || []).length;
+
+      const totalDecisions = (data.monthlyDecisions || []).reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+      document.getElementById('stat-decisions').textContent = totalDecisions;
+
+      const totalExpiries = (data.upcomingExpiries || []).reduce((acc, curr) => acc + (Number(curr.count) || 0), 0);
+      document.getElementById('stat-expiries').textContent = totalExpiries;
+    }
+
+    function renderCategoryChart(items) {
+      const ctx = document.getElementById('categoryChart').getContext('2d');
+      if (categoryChartInst) categoryChartInst.destroy();
+
+      const labels = items.map(i => i.category_name || 'General');
+      const counts = items.map(i => i.businesses_count || 0);
+
+      categoryChartInst = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{
+            data: counts,
+            backgroundColor: ['#006B61', '#7AE3CE', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Inter' } } }
+          }
+        }
+      });
+    }
+
+    function renderVolumeChart(items) {
+      const ctx = document.getElementById('volumeChart').getContext('2d');
+      if (volumeChartInst) volumeChartInst.destroy();
+
+      const labels = items.map(i => i.license_name ? i.license_name.substring(0, 18) : 'Permit');
+      const counts = items.map(i => i.applications_count || 0);
+
+      volumeChartInst = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Applications Filed',
+            data: counts,
+            backgroundColor: '#006B61',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 } },
+            x: { ticks: { font: { family: 'Inter', size: 10 } } }
+          }
+        }
+      });
+    }
+
+    function renderDecisionsChart(items) {
+      const ctx = document.getElementById('decisionsChart').getContext('2d');
+      if (decisionsChartInst) decisionsChartInst.destroy();
+
+      const labels = items.map(i => i.month_label);
+      const approved = items.map(i => i.approved || 0);
+      const rejected = items.map(i => i.rejected || 0);
+
+      decisionsChartInst = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels.length ? labels : ['Current Period'],
+          datasets: [
+            {
+              label: 'Approved',
+              data: approved.length ? approved : [0],
+              backgroundColor: '#10b981',
+              borderRadius: 4
+            },
+            {
+              label: 'Rejected',
+              data: rejected.length ? rejected : [0],
+              backgroundColor: '#ef4444',
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12 } }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 } }
+          }
+        }
+      });
+    }
+
+    function renderExpiryChart(items) {
+      const ctx = document.getElementById('expiryChart').getContext('2d');
+      if (expiryChartInst) expiryChartInst.destroy();
+
+      const labels = items.map(i => i.expiry_month);
+      const counts = items.map(i => i.count || 0);
+
+      expiryChartInst = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels.length ? labels : ['Upcoming 12 Months'],
+          datasets: [{
+            label: 'Licenses Expiring',
+            data: counts.length ? counts : [0],
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245,158,11,0.1)',
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#f59e0b'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 } }
+          }
+        }
+      });
+    }
+
+    function renderVolumeTable(items) {
+      const tbody = document.getElementById('table-volume-breakdown');
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-muted);">No application volume recorded yet.</td></tr>';
+        return;
+      }
+
+      const total = items.reduce((sum, i) => sum + (Number(i.applications_count) || 0), 0) || 1;
+
+      tbody.innerHTML = items.map(i => {
+        const count = Number(i.applications_count) || 0;
+        const pct = Math.round((count / total) * 100);
+        return `
+          <tr>
+            <td><strong>${escapeHtml(i.license_name || 'Standard License')}</strong></td>
+            <td>${count} submissions</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <div style="flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;">
+                  <div style="width:${pct}%;height:100%;background:var(--primary);border-radius:4px;"></div>
+                </div>
+                <span style="font-size:0.8rem;font-weight:600;min-width:32px;">${pct}%</span>
+              </div>
+            </td>
+            <td>
+              ${pct > 30 
+                ? '<span class="badge badge-success" style="font-size:0.7rem;">High Demand</span>' 
+                : '<span class="badge" style="background:#f1f5f9;color:#64748b;font-size:0.7rem;">Normal Demand</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]);
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>

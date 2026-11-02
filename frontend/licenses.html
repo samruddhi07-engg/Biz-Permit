@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>License Catalog — BizPermit</title>
+  <meta name="description" content="Explore official commercial authorizations, fee schedules, processing turnarounds, and departmental oversight frameworks.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+
+  <header id="public-header" class="public-header"></header>
+
+  <main id="main-content" style="padding: clamp(2.5rem, 5vw, 4rem) 0 5rem; flex: 1;">
+    <div class="container">
+      
+      <!-- Page Header -->
+      <div style="margin-bottom: 2.5rem;">
+        <span style="font-family: var(--font-heading); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted);">
+          MUNICIPAL STATUTORY REGISTRY
+        </span>
+        <h1 style="margin-top: 0.35rem; margin-bottom: 0.5rem;">Commercial License Catalog</h1>
+        <p class="lead" style="max-width: 650px;">
+          Explore official commercial authorizations, fee schedules, processing turnarounds, and departmental oversight frameworks.
+        </p>
+      </div>
+
+      <!-- Filters & Search Toolbar (Responsive Class) -->
+      <div class="card" style="margin-bottom: 2.5rem; padding: clamp(1.25rem, 2.5vw, 1.75rem);">
+        <div class="filters-grid">
+          
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-search">Search Query</label>
+            <div style="position: relative; display: flex; align-items: center;">
+              <span class="material-symbols-outlined" style="position: absolute; left: 12px; color: var(--color-muted); font-size: 18px;">search</span>
+              <input type="text" id="filter-search" class="form-control" style="padding-left: 38px;" placeholder="Search by license name or code...">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-category">Business Sector</label>
+            <select id="filter-category" class="form-select">
+              <option value="">All Sectors</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-department">Department</label>
+            <select id="filter-department" class="form-select">
+              <option value="">All Departments</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-sort">Sort Order</label>
+            <select id="filter-sort" class="form-select">
+              <option value="name">Name (A-Z)</option>
+              <option value="fee_asc">Fee: Low to High</option>
+              <option value="fee_desc">Fee: High to Low</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button onclick="applyFilters()" class="btn btn-primary" style="flex: 1;">
+              <span class="material-symbols-outlined" style="font-size: 16px;">tune</span>
+              <span>Filter</span>
+            </button>
+            <button onclick="resetFilters()" class="btn btn-secondary" title="Reset Filters" style="min-width: 44px; padding: 0;">
+              <span class="material-symbols-outlined" style="font-size: 16px;">refresh</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Results Count Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div id="results-count" style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Loading catalog...</div>
+        <div id="cache-indicator" style="font-size: 0.75rem; color: var(--text-muted); display: none;">⚡ Served from Redis Cache</div>
+      </div>
+
+      <!-- License Cards Grid -->
+      <div id="license-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1.75rem;">
+        <!-- Dynamic Cards -->
+      </div>
+
+    </div>
+  </main>
+
+  <footer id="public-footer" class="public-footer"></footer>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let allLicenses = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderPublicHeader('licenses');
+      renderPublicFooter();
+      await loadFilterOptions();
+      readUrlParams();
+      await fetchLicenses();
+    });
+
+    async function loadFilterOptions() {
+      try {
+        const [catRes, deptRes] = await Promise.all([
+          API.get('/business-categories'),
+          API.get('/license-types/meta/departments')
+        ]);
+
+        if (catRes.success) {
+          const catSelect = document.getElementById('filter-category');
+          catRes.data.forEach(c => {
+            catSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+          });
+        }
+
+        if (deptRes.success) {
+          const deptSelect = document.getElementById('filter-department');
+          deptRes.data.forEach(d => {
+            deptSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load filter meta:', err);
+      }
+    }
+
+    function readUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('search')) document.getElementById('filter-search').value = params.get('search');
+      if (params.get('categoryId')) document.getElementById('filter-category').value = params.get('categoryId');
+    }
+
+    async function fetchLicenses() {
+      const grid = document.getElementById('license-cards-grid');
+      grid.innerHTML = '<div style="grid-column: 1 / -1; padding: 3rem; text-align: center; color: var(--text-secondary);">Loading license catalog...</div>';
+
+      const search = document.getElementById('filter-search').value.trim();
+      const categoryId = document.getElementById('filter-category').value;
+      const departmentId = document.getElementById('filter-department').value;
+      const sortBy = document.getElementById('filter-sort').value;
+
+      const params = {};
+      if (search) params.search = search;
+      if (categoryId) params.categoryId = categoryId;
+      if (departmentId) params.departmentId = departmentId;
+      if (sortBy) params.sortBy = sortBy;
+
+      try {
+        const res = await API.get('/license-types', params);
+        if (res.success && res.data) {
+          allLicenses = res.data;
+          renderCards(allLicenses);
+          document.getElementById('results-count').textContent = `Showing ${allLicenses.length} certified license frameworks`;
+          if (res.source === 'cache') {
+            document.getElementById('cache-indicator').style.display = 'block';
+          } else {
+            document.getElementById('cache-indicator').style.display = 'none';
+          }
+        }
+      } catch (err) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; padding: 3rem; text-align: center; color: var(--state-error);">Failed to load license catalog: ${err.message}</div>`;
+      }
+    }
+
+    function renderCards(licenses) {
+      const grid = document.getElementById('license-cards-grid');
+      if (licenses.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; padding: 4rem 2rem; text-align: center; background: var(--bg-secondary); border-radius: var(--radius-xl); border: 1px dashed var(--border-default);">
+            <span class="material-symbols-outlined" style="font-size: 48px; color: var(--text-muted); margin-bottom: 1rem;">search_off</span>
+            <h3>No matching licenses found</h3>
+            <p style="margin-top: 0.5rem;">Try adjusting your keyword search or category filters.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = licenses.map(l => `
+        <div class="card card-lift" style="display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius-lg);">
+          <div>
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 1rem;">
+              <span class="badge badge-draft" style="font-family: var(--font-heading); font-weight: 700;">${l.code}</span>
+              ${l.requires_inspection ? '<span class="badge badge-review"><span class="material-symbols-outlined" style="font-size: 12px;">fact_check</span> Physical Inspection</span>' : '<span class="badge badge-active">Digital Fast-Track</span>'}
+            </div>
+
+            <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; line-height: 1.3;">
+              <a href="/license-details.html?id=${l.id}" style="color: var(--text-primary); text-decoration: none;">${l.name}</a>
+            </h3>
+
+            <div style="font-size: 0.75rem; font-weight: 600; color: var(--accent-teal); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 4px;">
+              <span class="material-symbols-outlined" style="font-size: 14px;">account_balance</span>
+              <span>${l.department_name}</span>
+            </div>
+
+            <p style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+              ${l.description || 'Statutory regulatory authorization under municipal trade mandates.'}
+            </p>
+          </div>
+
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+              <div>
+                <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Standard Fee</span>
+                <div style="font-size: 1.15rem; font-weight: 800; font-family: var(--font-heading);">${formatCurrency(l.fee)}</div>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Turnaround SLA</span>
+                <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">${l.processing_sla_days} Days</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <a href="/license-details.html?id=${l.id}" class="btn btn-secondary btn-sm" style="flex: 1;">
+                <span>View Details</span>
+                <span class="material-symbols-outlined" style="font-size: 14px;">info</span>
+              </a>
+              <a href="/owner/apply.html?licenseTypeId=${l.id}" class="btn btn-primary btn-sm" style="flex: 1;">
+                <span>Apply Now</span>
+                <span class="material-symbols-outlined" style="font-size: 14px;">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function applyFilters() {
+      fetchLicenses();
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-category').value = '';
+      document.getElementById('filter-department').value = '';
+      document.getElementById('filter-sort').value = 'name';
+      fetchLicenses();
+    }
+  </script>
+</body>
+</html>

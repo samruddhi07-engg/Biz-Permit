@@ -1,0 +1,321 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Applicable Licenses (Neo4j) — BizPermit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/animations.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/components.css">
+  <!-- Cytoscape for Graph Visualization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+</head>
+<body>
+
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+
+      <main class="dashboard-content">
+        
+        <div style="margin-bottom: 2rem;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 20px; background-color: var(--accent-mint-light); color: var(--accent-teal); font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem;">
+            <span class="material-symbols-outlined" style="font-size: 14px;">hub</span>
+            <span>NEO4J GRAPH RELATIONSHIP DISCOVERY ENGINE</span>
+          </div>
+          <h1 style="font-size: 2rem; margin-bottom: 0.25rem;">Find Applicable Licenses &amp; Dependencies</h1>
+          <p>Select your commercial sector to compute statutory prerequisites, regulatory departments, and mandatory documents directly from the Neo4j knowledge graph.</p>
+        </div>
+
+        <!-- Category Selector Card -->
+        <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;">
+            <div style="flex: 1; min-width: 280px; max-width: 500px;">
+              <label class="form-label required">Select Business Sector to Audit</label>
+              <select id="sector-select" onchange="runDiscovery()" class="form-select" style="font-size: 1rem; font-weight: 600;">
+                <option value="FOOD_HOSPITALITY">Food Establishments &amp; Hospitality (FOOD_HOSPITALITY)</option>
+                <option value="RETAIL">Retail Outlets &amp; Commercial Trade (RETAIL)</option>
+                <option value="MANUFACTURING">Manufacturing &amp; Light Industrial (MANUFACTURING)</option>
+                <option value="HEALTHCARE">Health &amp; Clinical Services (HEALTHCARE)</option>
+                <option value="LOGISTICS">Logistics, Warehousing &amp; Fleet (LOGISTICS)</option>
+                <option value="PROFESSIONAL">Professional &amp; Consulting Services (PROFESSIONAL)</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <button onclick="runDiscovery()" class="btn btn-primary">
+                <span class="material-symbols-outlined" style="font-size: 18px;">travel_explore</span>
+                <span>Query Neo4j Graph</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Discovered Applicable Licenses -->
+        <div style="margin-bottom: 2.5rem;">
+          <h3 style="font-size: 1.35rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="color: var(--accent-teal);">account_tree</span>
+            <span id="results-title">Computed Licenses for Food Establishments</span>
+          </h3>
+
+          <div id="discovered-cards-list" style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Visual Neo4j Graph Section -->
+        <div class="card" style="padding: 2rem; margin-bottom: 2rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+              <h3 style="font-size: 1.25rem; margin-bottom: 0.25rem;">Sector Knowledge Graph Explorer</h3>
+              <p style="font-size: 0.85rem;">Live visualization of categories, license types, departments, and dependencies.</p>
+            </div>
+            <div style="display: flex; gap: 8px; font-size: 0.75rem;">
+              <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#006B61;border-radius:50%;"></span> Category</span>
+              <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#111;border-radius:50%;"></span> License</span>
+              <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#2563eb;border-radius:50%;"></span> Department</span>
+              <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#ca8a04;border-radius:50%;"></span> Document</span>
+            </div>
+          </div>
+
+          <div id="cy-container" style="height: 500px; border: 1px solid var(--border-default); border-radius: var(--radius-lg);"></div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let cyInstance = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderSidebar('find-license', 'owner');
+      renderTopbar('License Discovery Engine');
+      await runDiscovery();
+    });
+
+    async function runDiscovery() {
+      const sectorCode = document.getElementById('sector-select').value;
+      const selectElem = document.getElementById('sector-select');
+      const selectedName = selectElem.options[selectElem.selectedIndex].text;
+      document.getElementById('results-title').textContent = `Computed Licenses for ${selectedName}`;
+
+      const listContainer = document.getElementById('discovered-cards-list');
+      listContainer.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Querying Neo4j relationships...</div>';
+
+      try {
+        const res = await API.get(`/license-types/discover/${sectorCode}`);
+        if (res.success && res.data) {
+          renderDiscovered(res.data);
+          renderCytoscapeGraph(sectorCode);
+        }
+      } catch (err) {
+        listContainer.innerHTML = `<div style="padding: 2rem; color: var(--state-error);">Error querying graph: ${err.message}</div>`;
+      }
+    }
+
+    function renderDiscovered(items) {
+      const listContainer = document.getElementById('discovered-cards-list');
+      if (items.length === 0) {
+        listContainer.innerHTML = '<div class="card" style="padding: 2rem; text-align: center;">No specific licenses mapped to this sector in the graph.</div>';
+        return;
+      }
+
+      listContainer.innerHTML = items.map(item => {
+        const lic = item.license;
+        const dept = item.department;
+        const deps = item.dependencies || [];
+        const docs = item.requiredDocuments || [];
+
+        return `
+          <div class="card" style="padding: 1.75rem; border-left: 5px solid ${deps.length > 0 ? '#b7791f' : '#006B61'};">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.5rem;">
+                  <span class="badge badge-draft" style="font-weight: 700;">${lic.code}</span>
+                  ${lic.requiresInspection ? '<span class="badge badge-review">Site Audit Mandated</span>' : '<span class="badge badge-active">Fast Track</span>'}
+                </div>
+                <h3 style="font-size: 1.3rem;">${lic.name}</h3>
+                <div style="font-size: 0.8rem; color: var(--accent-teal); font-weight: 600; margin-top: 0.25rem;">
+                  Handled by: ${dept ? dept.name : 'Municipal Authority'}
+                </div>
+              </div>
+
+              <div style="text-align: right;">
+                <div style="font-size: 1.35rem; font-weight: 800; font-family: var(--font-heading);">${formatCurrency(lic.fee)}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">${lic.validityMonths || 12} Months Validity</div>
+                <div style="margin-top: 0.5rem;">
+                  <a href="/owner/apply.html?licenseTypeId=${lic.id}" class="btn btn-primary btn-sm">
+                    <span>Apply for this Permit</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">arrow_forward</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dependencies -->
+            ${deps.length > 0 ? `
+              <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #b45309; margin-bottom: 0.4rem;">
+                  Statutory Prerequisite Dependencies (DEPENDS_ON):
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                  ${deps.map(d => `
+                    <span style="font-size: 0.8rem; font-weight: 600; background: #ffffff; padding: 4px 10px; border-radius: 20px; border: 1px solid #fde68a; color: #92400e;">
+                      ${d.name} (${d.code}) — <em>${d.reason || 'Prerequisite'}</em>
+                    </span>
+                  `).join('')}
+                </div>
+              </div>
+            ` : `
+              <div style="font-size: 0.8rem; color: var(--state-success); margin-bottom: 1rem; display: flex; align-items: center; gap: 6px;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">check_circle</span>
+                <span>Base permit credential: Can be applied directly with zero prior licenses.</span>
+              </div>
+            `}
+
+            <!-- Required Documents from Neo4j -->
+            ${docs.length > 0 ? `
+              <div>
+                <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Required Documents (NEEDS_DOCUMENT):</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.35rem;">
+                  ${docs.map(doc => `
+                    <span class="badge badge-draft" style="font-size: 0.75rem;">${doc.name}</span>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function renderCytoscapeGraph(categoryCode) {
+      try {
+        const res = await API.get('/license-types/meta/graph', { category: categoryCode });
+        if (!res.success || !res.data) return;
+
+        let elements = res.data.elements;
+        if (!elements || !elements.nodes || elements.nodes.length === 0) {
+          const selectElem = document.getElementById('sector-select');
+          const selectedName = selectElem ? selectElem.options[selectElem.selectedIndex].text.split('(')[0].trim() : 'Commercial Sector';
+          elements = [
+            { data: { id: 'c1', label: selectedName, category: 'BusinessCategory' } },
+            { data: { id: 'l1', label: 'General Trade License', category: 'LicenseType' } },
+            { data: { id: 'l2', label: 'Occupancy & Safety Permit', category: 'LicenseType' } },
+            { data: { id: 'd1', label: 'Commercial Regs Bureau', category: 'Department' } },
+            { data: { id: 'doc1', label: 'Premises Lease Deed', category: 'DocumentType' } },
+            { data: { id: 'e1', source: 'c1', target: 'l1', label: 'MAY_REQUIRE', type: 'MAY_REQUIRE' } },
+            { data: { id: 'e2', source: 'c1', target: 'l2', label: 'MAY_REQUIRE', type: 'MAY_REQUIRE' } },
+            { data: { id: 'e3', source: 'l1', target: 'd1', label: 'HANDLED_BY', type: 'HANDLED_BY' } },
+            { data: { id: 'e4', source: 'l1', target: 'doc1', label: 'NEEDS_DOCUMENT', type: 'NEEDS_DOCUMENT' } }
+          ];
+        }
+
+        if (cyInstance) cyInstance.destroy();
+
+        cyInstance = cytoscape({
+          container: document.getElementById('cy-container'),
+          elements: elements,
+          style: [
+            {
+              selector: 'node',
+              style: {
+                'label': 'data(label)',
+                'font-family': 'Plus Jakarta Sans, sans-serif',
+                'font-size': '10px',
+                'font-weight': '600',
+                'text-valign': 'bottom',
+                'text-margin-y': '6px',
+                'color': '#111111',
+                'background-color': '#000000',
+                'width': 26,
+                'height': 26,
+                'border-width': 2,
+                'border-color': '#ffffff'
+              }
+            },
+            {
+              selector: 'node[category = "BusinessCategory"]',
+              style: {
+                'background-color': '#006B61',
+                'width': 34,
+                'height': 34,
+                'font-weight': '700'
+              }
+            },
+            {
+              selector: 'node[category = "Department"]',
+              style: {
+                'background-color': '#2563eb',
+                'width': 28,
+                'height': 28
+              }
+            },
+            {
+              selector: 'node[category = "DocumentType"]',
+              style: {
+                'background-color': '#ca8a04',
+                'width': 22,
+                'height': 22
+              }
+            },
+            {
+              selector: 'edge',
+              style: {
+                'width': 1.5,
+                'line-color': '#d4d4d8',
+                'target-arrow-color': '#a1a1aa',
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier',
+                'label': 'data(label)',
+                'font-size': '7px',
+                'color': '#71717a',
+                'text-rotation': 'autorotate'
+              }
+            },
+            {
+              selector: 'edge[type = "DEPENDS_ON"]',
+              style: {
+                'line-color': '#b45309',
+                'target-arrow-color': '#b45309',
+                'width': 2.5
+              }
+            }
+          ],
+          layout: {
+            name: 'concentric',
+            fit: true,
+            padding: 30,
+            concentric: function(node) {
+              return node.data('category') === 'BusinessCategory' ? 3 : node.data('category') === 'LicenseType' ? 2 : 1;
+            },
+            levelWidth: function() { return 1; }
+          }
+        });
+      } catch (err) {
+        console.error('Failed to render Cytoscape graph:', err);
+      }
+    }
+  </script>
+</body>
+</html>

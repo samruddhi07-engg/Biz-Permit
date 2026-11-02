@@ -1,0 +1,249 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Audit Trail — BizPermit Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:2rem;">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+              <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Compliance & Governance</span>
+              <span class="badge" style="background:#fee2e2;color:#991b1b;font-size:0.65rem;border:1px solid #fecaca;">Append-Only MySQL Audit Ledger</span>
+            </div>
+            <h1 style="font-size:1.875rem;margin-top:0.25rem;">Immutable Audit Logs</h1>
+            <p style="color:var(--text-secondary);">Chronological ledger tracking security events, role escalations, adjudication decisions, and inspections.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="loadAuditLogs()">
+            <span class="material-symbols-outlined" style="font-size:15px;">refresh</span> Refresh Logs
+          </button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="card" style="padding:1rem 1.25rem;margin-bottom:1.5rem;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:1rem;align-items:center;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:0.25rem;">Search Action / Entity ID</label>
+              <input type="text" id="filter-search" class="form-control" placeholder="Search keyword..." oninput="filterLogs()">
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:0.25rem;">Action Class</label>
+              <select id="filter-action" class="form-control" onchange="filterLogs()">
+                <option value="">All Action Types</option>
+                <option value="LOGIN">LOGIN</option>
+                <option value="LOGOUT">LOGOUT</option>
+                <option value="SUBMIT">SUBMISSION</option>
+                <option value="DECISION">DECISION</option>
+                <option value="INSPECTION">INSPECTION</option>
+                <option value="ROLES">ROLES & STATUS</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:0.25rem;">Target Entity Type</label>
+              <select id="filter-entity" class="form-control" onchange="filterLogs()">
+                <option value="">All Entities</option>
+                <option value="APPLICATION">APPLICATION</option>
+                <option value="USER">USER</option>
+                <option value="INSPECTION">INSPECTION</option>
+                <option value="LICENSE_TYPE">LICENSE_TYPE</option>
+                <option value="DEPARTMENT">DEPARTMENT</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit Table -->
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border-default);display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="font-size:0.95rem;font-weight:700;margin:0;">Logged System Events (<span id="total-count">0</span>)</h3>
+            <span class="badge" style="background:#f1f5f9;color:#64748b;font-size:0.7rem;">High-Integrity Trail</span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" style="width:100%;">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Actor / User</th>
+                  <th>Action</th>
+                  <th>Entity Type</th>
+                  <th>Entity ID</th>
+                  <th>IP Address</th>
+                  <th style="text-align:right;">Payload</th>
+                </tr>
+              </thead>
+              <tbody id="audit-table-body">
+                <tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-muted);">Loading audit trail...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Detail Payload Modal -->
+  <div id="payload-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:540px;">
+      <div class="modal-header">
+        <h3 style="font-size:1.1rem;font-weight:700;">Audit Event Metadata</h3>
+        <button class="modal-close" onclick="closePayloadModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:1rem;font-size:0.85rem;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.35rem;">
+            <strong>Action:</strong> <span id="modal-event-action" class="badge">-</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.35rem;">
+            <strong>Actor:</strong> <span id="modal-event-user">-</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <strong>Timestamp:</strong> <span id="modal-event-time">-</span>
+          </div>
+        </div>
+
+        <label class="form-label" style="font-size:0.75rem;margin-bottom:0.35rem;">Event Context Payload (JSON)</label>
+        <pre id="modal-event-json" style="background:#0f172a;color:#38bdf8;padding:1rem;border-radius:8px;font-size:0.75rem;overflow-x:auto;max-height:260px;margin:0;"></pre>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closePayloadModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let allLogs = [];
+
+    async function initPage() {
+      const user = requireAuth('ADMIN');
+      if (!user) return;
+      renderSidebar('audit-logs', 'ADMIN');
+      renderTopbar();
+
+      await loadAuditLogs();
+    }
+
+    async function loadAuditLogs() {
+      try {
+        const res = await api.get('/admin/audit-logs');
+        allLogs = res.data || [];
+        renderTable(allLogs);
+      } catch (err) {
+        showToast('Error loading audit logs: ' + err.message, 'error');
+        document.getElementById('audit-table-body').innerHTML = 
+          '<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--danger);">Failed to load audit logs.</td></tr>';
+      }
+    }
+
+    function renderTable(list) {
+      document.getElementById('total-count').textContent = list.length;
+      const tbody = document.getElementById('audit-table-body');
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-muted);">No audit records found matching specified filters.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(log => {
+        const timeStr = log.created_at ? new Date(log.created_at).toLocaleString() : '-';
+        const actionBadge = formatActionBadge(log.action);
+        const hasPayload = log.payload && Object.keys(log.payload).length > 0;
+
+        return `
+          <tr>
+            <td style="font-size:0.8rem;color:var(--text-muted);white-space:nowrap;">${timeStr}</td>
+            <td>
+              <strong style="color:var(--text-primary);font-size:0.85rem;">${escapeHtml(log.user_name || 'System / Auto')}</strong>
+              <div style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(log.user_email || '')}</div>
+            </td>
+            <td>${actionBadge}</td>
+            <td><span class="badge" style="background:#f1f5f9;color:#475569;font-size:0.7rem;">${escapeHtml(log.entity_type || '-')}</span></td>
+            <td style="font-family:monospace;font-size:0.8rem;">#${escapeHtml(String(log.entity_id || '-'))}</td>
+            <td style="font-family:monospace;font-size:0.75rem;color:var(--text-muted);">${escapeHtml(log.ip_address || '127.0.0.1')}</td>
+            <td style="text-align:right;">
+              ${hasPayload ? `
+                <button class="btn btn-sm btn-secondary" onclick="viewPayload(${log.id})" title="Inspect JSON payload" style="padding:2px 8px;font-size:0.75rem;">
+                  <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;">data_object</span> View
+                </button>
+              ` : '<span style="color:var(--text-muted);font-size:0.75rem;">-</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function formatActionBadge(action) {
+      if (!action) return '<span class="badge">UNKNOWN</span>';
+      if (action.includes('LOGIN') || action.includes('AUTH')) {
+        return `<span class="badge" style="background:#f3e8ff;color:#7e22ce;font-size:0.7rem;">${action}</span>`;
+      }
+      if (action.includes('CREATE') || action.includes('APPROVED') || action.includes('SUBMIT')) {
+        return `<span class="badge badge-success" style="font-size:0.7rem;">${action}</span>`;
+      }
+      if (action.includes('UPDATE') || action.includes('CHANGE') || action.includes('SCHEDULE') || action.includes('ASSIGN')) {
+        return `<span class="badge" style="background:#e0f2fe;color:#0369a1;font-size:0.7rem;">${action}</span>`;
+      }
+      if (action.includes('DELETE') || action.includes('REJECT') || action.includes('FAIL')) {
+        return `<span class="badge badge-error" style="font-size:0.7rem;">${action}</span>`;
+      }
+      return `<span class="badge" style="background:#f1f5f9;color:#334155;font-size:0.7rem;">${action}</span>`;
+    }
+
+    function filterLogs() {
+      const q = (document.getElementById('filter-search').value || '').toLowerCase();
+      const actionFilter = document.getElementById('filter-action').value;
+      const entityFilter = document.getElementById('filter-entity').value;
+
+      const filtered = allLogs.filter(log => {
+        const matchesQ = !q || 
+          (log.action && log.action.toLowerCase().includes(q)) ||
+          (log.user_name && log.user_name.toLowerCase().includes(q)) ||
+          (String(log.entity_id || '').includes(q));
+        const matchesAction = !actionFilter || (log.action && log.action.includes(actionFilter));
+        const matchesEntity = !entityFilter || log.entity_type === entityFilter;
+        return matchesQ && matchesAction && matchesEntity;
+      });
+
+      renderTable(filtered);
+    }
+
+    function viewPayload(logId) {
+      const log = allLogs.find(l => l.id === logId);
+      if (!log) return;
+
+      document.getElementById('modal-event-action').textContent = log.action;
+      document.getElementById('modal-event-user').textContent = `${log.user_name || 'System'} (${log.user_email || 'internal'})`;
+      document.getElementById('modal-event-time').textContent = log.created_at ? new Date(log.created_at).toLocaleString() : '-';
+      document.getElementById('modal-event-json').textContent = JSON.stringify(log.payload || {}, null, 2);
+
+      document.getElementById('payload-modal').style.display = 'flex';
+    }
+
+    function closePayloadModal() {
+      document.getElementById('payload-modal').style.display = 'none';
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]);
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>

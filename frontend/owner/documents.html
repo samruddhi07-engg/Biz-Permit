@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documents Vault — BizPermit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <style>
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 900px) { .stat-strip { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 500px) { .stat-strip { grid-template-columns: 1fr 1fr; } }
+
+    .stat-chip {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+    .stat-chip .label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin-bottom: 0.4rem; }
+    .stat-chip .value { font-size: 1.75rem; font-weight: 800; font-family: var(--font-heading); line-height: 1; }
+
+    .upload-zone {
+      border: 2px dashed var(--color-border);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: var(--color-surface-alt);
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--color-primary);
+      background: rgba(0,107,97,0.04);
+    }
+    .upload-zone .icon { font-size: 36px; color: var(--color-primary); display: block; margin-bottom: 0.5rem; }
+
+    .doc-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto auto auto;
+      gap: 0.75rem 1rem;
+      align-items: center;
+      padding: 0.875rem 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      transition: background 0.15s;
+    }
+    .doc-row:last-child { border-bottom: none; }
+    .doc-row:hover { background: var(--color-surface-alt); }
+
+    .doc-icon-wrap {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .doc-icon-wrap.pdf { background: rgba(220,69,69,0.1); color: #DC4545; }
+    .doc-icon-wrap.img { background: rgba(0,107,97,0.1); color: var(--color-primary); }
+    .doc-icon-wrap.file { background: var(--color-surface-alt); color: var(--color-muted); }
+
+    .rejection-banner {
+      background: rgba(220,69,69,0.07);
+      border: 1px solid rgba(220,69,69,0.2);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      color: #DC4545;
+      margin-top: 0.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .filter-bar input, .filter-bar select {
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 700px) {
+      .doc-row { grid-template-columns: auto 1fr; }
+      .doc-row > *:nth-child(3),
+      .doc-row > *:nth-child(4),
+      .doc-row > *:nth-child(5),
+      .doc-row > *:nth-child(6) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content">
+
+        <!-- Page Header -->
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1.5rem;">
+          <div>
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--color-primary);">Documents Vault</div>
+            <h1 style="font-size:1.875rem;font-weight:800;font-family:var(--font-heading);margin:0.2rem 0 0;letter-spacing:-0.02em;">My Documents</h1>
+            <p style="color:var(--color-text-secondary);margin-top:0.3rem;">All uploaded supporting documents across your applications.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openUploadModal()" style="display:flex;align-items:center;gap:6px;">
+            <span class="material-symbols-outlined" style="font-size:16px;">upload_file</span>
+            Upload Document
+          </button>
+        </div>
+
+        <!-- Stats Strip -->
+        <div class="stat-strip">
+          <div class="stat-chip">
+            <div class="label">Total Documents</div>
+            <div id="stat-total" class="value" style="color:var(--color-text);">—</div>
+          </div>
+          <div class="stat-chip">
+            <div class="label">Verified</div>
+            <div id="stat-verified" class="value" style="color:var(--color-success);">—</div>
+          </div>
+          <div class="stat-chip">
+            <div class="label">Pending Review</div>
+            <div id="stat-pending" class="value" style="color:var(--color-warning);">—</div>
+          </div>
+          <div class="stat-chip">
+            <div class="label">Rejected</div>
+            <div id="stat-rejected" class="value" style="color:var(--color-error);">—</div>
+          </div>
+        </div>
+
+        <!-- Document List Card -->
+        <div class="card" style="overflow:hidden;">
+          <!-- Filter Bar -->
+          <div class="filter-bar">
+            <div style="position:relative;flex:1;min-width:200px;">
+              <span class="material-symbols-outlined" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:17px;color:var(--color-muted);">search</span>
+              <input id="doc-search" type="text" placeholder="Search by filename or application..." class="form-control" style="padding-left:2.25rem;">
+            </div>
+            <select id="status-filter" class="form-control" style="max-width:175px;">
+              <option value="">All Statuses</option>
+              <option value="UPLOADED">Uploaded</option>
+              <option value="PENDING">Pending Review</option>
+              <option value="UNDER_REVIEW">Under Review</option>
+              <option value="VERIFIED">Verified</option>
+              <option value="REJECTED">Rejected</option>
+              <option value="REPLACEMENT_REQUIRED">Replacement Required</option>
+            </select>
+            <select id="category-filter" class="form-control" style="max-width:175px;">
+              <option value="">All Categories</option>
+              <option value="BUSINESS_REGISTRATION">Business Registration</option>
+              <option value="IDENTITY_PROOF">Identity Proof</option>
+              <option value="ADDRESS_PROOF">Address Proof</option>
+              <option value="LEASE_AGREEMENT">Lease Agreement</option>
+              <option value="OWNERSHIP_PROOF">Ownership Proof</option>
+              <option value="SAFETY_CERTIFICATE">Safety Certificate</option>
+              <option value="HEALTH_CERTIFICATE">Health Certificate</option>
+              <option value="TAX_DOCUMENT">Tax Document</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+
+          <!-- Loading State -->
+          <div id="docs-loading" style="padding:3rem 1.5rem;">
+            <div style="height:48px;border-radius:8px;background:var(--color-surface-alt);animation:pulse 1.5s ease-in-out infinite;margin-bottom:0.75rem;"></div>
+            <div style="height:48px;border-radius:8px;background:var(--color-surface-alt);animation:pulse 1.5s ease-in-out infinite;margin-bottom:0.75rem;opacity:0.7;"></div>
+            <div style="height:48px;border-radius:8px;background:var(--color-surface-alt);animation:pulse 1.5s ease-in-out infinite;opacity:0.4;"></div>
+          </div>
+
+          <!-- Empty State -->
+          <div id="docs-empty" style="display:none;padding:4rem 2rem;text-align:center;">
+            <span class="material-symbols-outlined" style="font-size:52px;color:var(--color-muted);display:block;margin-bottom:1rem;">folder_open</span>
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:0.4rem;">No documents found</h3>
+            <p style="color:var(--color-text-secondary);font-size:0.875rem;margin-bottom:1.5rem;">Documents appear here once you upload them via an application or using the Upload button above.</p>
+            <button class="btn btn-primary btn-sm" onclick="openUploadModal()">Upload Your First Document</button>
+          </div>
+
+          <!-- Document List -->
+          <div id="docs-list" style="display:none;"></div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Upload Modal -->
+  <div id="upload-modal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title">
+    <div class="modal-box" style="max-width:540px;">
+      <div class="modal-header">
+        <h3 id="upload-modal-title" style="font-size:1rem;font-weight:700;">Upload Document</h3>
+        <button class="modal-close" onclick="closeModal('upload-modal')" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="upload-form" onsubmit="submitUpload(event)">
+          <!-- Drop Zone -->
+          <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+            <span class="material-symbols-outlined icon">cloud_upload</span>
+            <div style="font-weight:600;margin-bottom:0.25rem;">Drag & drop or click to select file</div>
+            <div style="font-size:0.8rem;color:var(--color-muted);">Supported: PDF, JPG, JPEG, PNG — Max 10 MB</div>
+            <div id="file-selected" style="display:none;margin-top:0.75rem;padding:0.5rem 1rem;background:rgba(0,107,97,0.08);border-radius:8px;font-size:0.85rem;font-weight:600;color:var(--color-primary);"></div>
+          </div>
+          <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handleFileSelect(event)">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.25rem;">
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select id="doc-category" class="form-control" required>
+                <option value="">Select category</option>
+                <option value="BUSINESS_REGISTRATION">Business Registration</option>
+                <option value="IDENTITY_PROOF">Identity Proof</option>
+                <option value="ADDRESS_PROOF">Address Proof</option>
+                <option value="LEASE_AGREEMENT">Lease Agreement</option>
+                <option value="OWNERSHIP_PROOF">Ownership Proof</option>
+                <option value="SAFETY_CERTIFICATE">Safety Certificate</option>
+                <option value="HEALTH_CERTIFICATE">Health Certificate</option>
+                <option value="TAX_DOCUMENT">Tax Document</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Link to Application <span style="color:var(--color-muted);font-weight:400;">(optional)</span></label>
+              <select id="doc-application" class="form-control">
+                <option value="">Not linked</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="upload-error" style="display:none;margin-top:1rem;padding:0.75rem 1rem;background:rgba(220,69,69,0.08);border:1px solid rgba(220,69,69,0.2);border-radius:8px;font-size:0.85rem;color:#DC4545;"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('upload-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitUpload()" id="upload-btn">
+          <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">upload</span>
+          Upload
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Modal -->
+  <div id="preview-modal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="preview-title">
+    <div class="modal-box" style="max-width:740px;width:95%;">
+      <div class="modal-header">
+        <h3 id="preview-title" style="font-size:1rem;font-weight:700;">Document Preview</h3>
+        <button class="modal-close" onclick="closePreview()" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align:center;min-height:300px;display:flex;align-items:center;justify-content:center;padding:0;">
+        <img id="preview-img" src="" alt="Document preview" style="max-width:100%;max-height:65vh;display:none;border-radius:6px;">
+        <iframe id="preview-pdf" src="" style="width:100%;height:65vh;border:none;display:none;border-radius:6px;"></iframe>
+        <div id="preview-unsupported" style="display:none;padding:3rem;color:var(--color-muted);">
+          <span class="material-symbols-outlined" style="font-size:40px;display:block;margin-bottom:0.75rem;">description</span>
+          Preview not available. Please download to view.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closePreview()">Close</button>
+        <a id="preview-dl-btn" href="#" class="btn btn-primary" onclick="downloadDoc(event)">
+          <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">download</span>
+          Download
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes Modal -->
+  <div id="notes-modal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <h3 style="font-size:1rem;font-weight:700;">Reviewer Notes</h3>
+        <button class="modal-close" onclick="closeModal('notes-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="notes-body" style="white-space:pre-wrap;line-height:1.7;font-size:0.9rem;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('notes-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div id="delete-modal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true">
+    <div class="modal-box" style="max-width:420px;">
+      <div class="modal-header">
+        <h3 style="font-size:1rem;font-weight:700;">Delete Document</h3>
+        <button class="modal-close" onclick="closeModal('delete-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.9rem;line-height:1.65;">Are you sure you want to delete <strong id="delete-doc-name"></strong>? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('delete-modal')">Cancel</button>
+        <button class="btn" style="background:var(--color-error);color:#fff;" id="delete-confirm-btn" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let allDocs = [];
+    let deleteTargetId = null;
+    let previewStorageKey = null;
+    let userApplications = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderSidebar('documents', 'owner');
+      renderTopbar('Documents Vault');
+
+      // Close modals on backdrop click
+      document.querySelectorAll('.modal-overlay').forEach(o => {
+        o.addEventListener('click', e => { if (e.target === o) { o.style.display = 'none'; } });
+      });
+
+      // Drag-and-drop
+      const dropZone = document.getElementById('drop-zone');
+      dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+      dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
+      });
+
+      document.getElementById('doc-search').addEventListener('input', applyFilters);
+      document.getElementById('status-filter').addEventListener('change', applyFilters);
+      document.getElementById('category-filter').addEventListener('change', applyFilters);
+
+      await loadDocs();
+      await loadApplicationsForSelect();
+    });
+
+    async function loadApplicationsForSelect() {
+      try {
+        const res = await API.get('/applications');
+        if (res.success && res.data) {
+          userApplications = res.data;
+          const sel = document.getElementById('doc-application');
+          res.data.forEach(app => {
+            const opt = document.createElement('option');
+            opt.value = app.id;
+            opt.textContent = `${app.application_number} — ${app.license_type_name || 'License'}`;
+            sel.appendChild(opt);
+          });
+        }
+      } catch (e) {}
+    }
+
+    async function loadDocs() {
+      try {
+        const res = await API.get('/applications/documents/my-vault');
+        if (!res.success) throw new Error(res.message || 'Failed to load documents');
+        allDocs = res.data || [];
+
+        // Update stats
+        const total = allDocs.length;
+        const verified = allDocs.filter(d => (d.verificationStatus || d.verification_status) === 'VERIFIED').length;
+        const pending = allDocs.filter(d => ['PENDING','UPLOADED','UNDER_REVIEW'].includes(d.verificationStatus || d.verification_status)).length;
+        const rejected = allDocs.filter(d => ['REJECTED','REPLACEMENT_REQUIRED'].includes(d.verificationStatus || d.verification_status)).length;
+
+        document.getElementById('stat-total').textContent = total;
+        document.getElementById('stat-verified').textContent = verified;
+        document.getElementById('stat-pending').textContent = pending;
+        document.getElementById('stat-rejected').textContent = rejected;
+
+        renderList(allDocs);
+      } catch (e) {
+        console.error('Failed to load documents:', e);
+        document.getElementById('docs-loading').style.display = 'none';
+        document.getElementById('docs-empty').style.display = 'block';
+        document.getElementById('stat-total').textContent = '0';
+        document.getElementById('stat-verified').textContent = '0';
+        document.getElementById('stat-pending').textContent = '0';
+        document.getElementById('stat-rejected').textContent = '0';
+      }
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('doc-search').value.toLowerCase();
+      const status = document.getElementById('status-filter').value;
+      const category = document.getElementById('category-filter').value;
+      const filtered = allDocs.filter(d => {
+        const fn = (d.originalFilename || d.original_filename || '').toLowerCase();
+        const an = (d.applicationNumber || '').toLowerCase();
+        const st = d.verificationStatus || d.verification_status || '';
+        const cat = d.category || d.documentCategory || '';
+        const matchSearch = !search || fn.includes(search) || an.includes(search);
+        const matchStatus = !status || st === status;
+        const matchCat = !category || cat === category;
+        return matchSearch && matchStatus && matchCat;
+      });
+      renderList(filtered);
+    }
+
+    function renderList(docs) {
+      document.getElementById('docs-loading').style.display = 'none';
+
+      if (!docs.length) {
+        document.getElementById('docs-empty').style.display = 'block';
+        document.getElementById('docs-list').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('docs-empty').style.display = 'none';
+      document.getElementById('docs-list').style.display = 'block';
+
+      const statusMap = {
+        UPLOADED:             '<span class="badge badge-draft">Uploaded</span>',
+        PENDING:              '<span class="badge badge-draft">Pending Review</span>',
+        UNDER_REVIEW:         '<span class="badge badge-review">Under Review</span>',
+        VERIFIED:             '<span class="badge badge-success">Verified</span>',
+        REJECTED:             '<span class="badge badge-error">Rejected</span>',
+        REPLACEMENT_REQUIRED: '<span class="badge badge-correction">Replace Required</span>',
+      };
+
+      document.getElementById('docs-list').innerHTML = docs.map(d => {
+        const sk = d.storageKey || d.storage_key || '';
+        const fn = d.originalFilename || d.original_filename || 'document';
+        const mime = d.mimeType || d.mime_type || '';
+        const sz = d.fileSize ? (d.fileSize > 1048576 ? (d.fileSize / 1048576).toFixed(1) + ' MB' : Math.round(d.fileSize / 1024) + ' KB') : '—';
+        const dt = formatDate(d.uploadedAt || d.uploaded_at);
+        const st = d.verificationStatus || d.verification_status || 'UPLOADED';
+        const notes = d.reviewNotes || d.review_notes || '';
+        const appNum = d.applicationNumber || '';
+        const catLabel = formatCategory(d.category || d.documentCategory);
+
+        const isPdf = mime === 'application/pdf';
+        const isImg = mime.startsWith('image/');
+
+        let iconClass = 'file';
+        let iconName = 'description';
+        if (isPdf) { iconClass = 'pdf'; iconName = 'picture_as_pdf'; }
+        else if (isImg) { iconClass = 'img'; iconName = 'image'; }
+
+        const canDelete = !['VERIFIED'].includes(st);
+
+        return `<div class="doc-row">
+          <div class="doc-icon-wrap ${iconClass}">
+            <span class="material-symbols-outlined" style="font-size:22px;">${iconName}</span>
+          </div>
+          <div style="min-width:0;">
+            <div style="font-weight:600;font-size:0.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escHtml(fn)}">${escHtml(fn)}</div>
+            <div style="font-size:0.75rem;color:var(--color-muted);margin-top:2px;">
+              ${catLabel}${appNum ? ` &bull; ${escHtml(appNum)}` : ''} &bull; ${sz}
+            </div>
+            ${(st === 'REJECTED' || st === 'REPLACEMENT_REQUIRED') && notes ? `
+              <div class="rejection-banner">
+                <span class="material-symbols-outlined" style="font-size:14px;flex-shrink:0;margin-top:1px;">error</span>
+                <span>${escHtml(notes)}</span>
+              </div>` : ''}
+          </div>
+          <div style="font-size:0.8rem;color:var(--color-muted);white-space:nowrap;">${dt}</div>
+          <div>${statusMap[st] || `<span class="badge">${st}</span>`}</div>
+          <div style="display:flex;gap:6px;flex-wrap:nowrap;">
+            ${(isPdf || isImg) ? `<button class="btn btn-secondary btn-sm" onclick="previewDoc('${encodeURIComponent(sk)}','${escJs(fn)}','${mime}')" title="Preview">
+              <span class="material-symbols-outlined" style="font-size:15px;">visibility</span></button>` : ''}
+            <button class="btn btn-secondary btn-sm" onclick="initiateDownload('${encodeURIComponent(sk)}','${escJs(fn)}')" title="Download">
+              <span class="material-symbols-outlined" style="font-size:15px;">download</span></button>
+            ${notes ? `<button class="btn btn-secondary btn-sm" onclick="showNotes('${escJs(notes)}')" title="View reviewer notes">
+              <span class="material-symbols-outlined" style="font-size:15px;">comment</span></button>` : ''}
+            ${canDelete ? `<button class="btn btn-secondary btn-sm" style="color:var(--color-error);" onclick="openDeleteModal('${d._id || d.id}','${escJs(fn)}')" title="Delete">
+              <span class="material-symbols-outlined" style="font-size:15px;">delete</span></button>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // Upload Flow
+    let selectedFile = null;
+
+    function openUploadModal() {
+      selectedFile = null;
+      document.getElementById('file-selected').style.display = 'none';
+      document.getElementById('upload-error').style.display = 'none';
+      document.getElementById('doc-category').value = '';
+      document.getElementById('doc-application').value = '';
+      document.getElementById('file-input').value = '';
+      document.getElementById('upload-modal').style.display = 'flex';
+    }
+
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (file) handleFile(file);
+    }
+
+    function handleFile(file) {
+      const MAX_SIZE = 10 * 1024 * 1024;
+      const ALLOWED = ['application/pdf','image/jpeg','image/png'];
+      document.getElementById('upload-error').style.display = 'none';
+      if (!ALLOWED.includes(file.type)) {
+        showUploadError('Only PDF, JPG, JPEG, and PNG files are allowed.');
+        return;
+      }
+      if (file.size > MAX_SIZE) {
+        showUploadError('File size exceeds 10 MB limit.');
+        return;
+      }
+      selectedFile = file;
+      const sel = document.getElementById('file-selected');
+      sel.textContent = `✓ ${file.name} (${Math.round(file.size/1024)} KB)`;
+      sel.style.display = 'block';
+    }
+
+    function showUploadError(msg) {
+      const el = document.getElementById('upload-error');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    async function submitUpload() {
+      if (!selectedFile) { showUploadError('Please select a file to upload.'); return; }
+      const category = document.getElementById('doc-category').value;
+      if (!category) { showUploadError('Please select a document category.'); return; }
+
+      const btn = document.getElementById('upload-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;animation:spin 1s linear infinite;">sync</span> Uploading...';
+
+      try {
+        const formData = new FormData();
+        formData.append('document', selectedFile);
+        formData.append('category', category);
+        const appId = document.getElementById('doc-application').value;
+        if (appId) formData.append('applicationId', appId);
+
+        const res = await API.post('/applications/documents/vault-upload', formData);
+        if (res.success) {
+          closeModal('upload-modal');
+          showToast('Document uploaded successfully.', 'success');
+          await loadDocs();
+        } else {
+          showUploadError(res.message || 'Upload failed. Please try again.');
+        }
+      } catch (e) {
+        showUploadError(e.message || 'Upload failed. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">upload</span> Upload';
+      }
+    }
+
+    // Preview
+    function previewDoc(encodedSk, fn, mime) {
+      previewStorageKey = encodedSk;
+      document.getElementById('preview-title').textContent = fn;
+      document.getElementById('preview-img').style.display = 'none';
+      document.getElementById('preview-pdf').style.display = 'none';
+      document.getElementById('preview-unsupported').style.display = 'none';
+
+      const url = '/api/applications/download/' + encodedSk;
+      document.getElementById('preview-dl-btn').dataset.sk = encodedSk;
+      document.getElementById('preview-dl-btn').dataset.fn = fn;
+
+      if (mime.startsWith('image/')) {
+        document.getElementById('preview-img').src = url;
+        document.getElementById('preview-img').style.display = 'block';
+      } else if (mime === 'application/pdf') {
+        document.getElementById('preview-pdf').src = url;
+        document.getElementById('preview-pdf').style.display = 'block';
+      } else {
+        document.getElementById('preview-unsupported').style.display = 'flex';
+      }
+      document.getElementById('preview-modal').style.display = 'flex';
+    }
+
+    function closePreview() {
+      document.getElementById('preview-modal').style.display = 'none';
+      document.getElementById('preview-pdf').src = '';
+      document.getElementById('preview-img').src = '';
+    }
+
+    function downloadDoc(e) {
+      e.preventDefault();
+      const btn = e.currentTarget;
+      const sk = btn.dataset.sk;
+      const fn = btn.dataset.fn;
+      initiateDownload(sk, fn);
+    }
+
+    function initiateDownload(encodedSk, fn) {
+      const url = '/api/applications/download/' + encodedSk;
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fn;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    // Delete
+    function openDeleteModal(docId, fn) {
+      deleteTargetId = docId;
+      document.getElementById('delete-doc-name').textContent = fn;
+      document.getElementById('delete-modal').style.display = 'flex';
+    }
+
+    async function confirmDelete() {
+      if (!deleteTargetId) return;
+      const btn = document.getElementById('delete-confirm-btn');
+      btn.disabled = true;
+      btn.textContent = 'Deleting...';
+      try {
+        const res = await API.delete('/applications/documents/' + deleteTargetId);
+        if (res.success) {
+          closeModal('delete-modal');
+          showToast('Document deleted.', 'success');
+          await loadDocs();
+        } else {
+          showToast(res.message || 'Delete failed.', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || 'Delete failed.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Delete';
+        deleteTargetId = null;
+      }
+    }
+
+    // Helpers
+    function showNotes(notes) {
+      document.getElementById('notes-body').textContent = notes;
+      document.getElementById('notes-modal').style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function escHtml(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function escJs(str) {
+      return String(str || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    }
+
+    function formatCategory(cat) {
+      const map = {
+        BUSINESS_REGISTRATION: 'Business Registration',
+        IDENTITY_PROOF: 'Identity Proof',
+        ADDRESS_PROOF: 'Address Proof',
+        LEASE_AGREEMENT: 'Lease Agreement',
+        OWNERSHIP_PROOF: 'Ownership Proof',
+        SAFETY_CERTIFICATE: 'Safety Certificate',
+        HEALTH_CERTIFICATE: 'Health Certificate',
+        TAX_DOCUMENT: 'Tax Document',
+        OTHER: 'Other',
+      };
+      return map[cat] || cat || 'General';
+    }
+  </script>
+</body>
+</html>

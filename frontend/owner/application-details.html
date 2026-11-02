@@ -1,0 +1,393 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Details — BizPermit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/animations.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/components.css">
+</head>
+<body>
+
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+
+      <main class="dashboard-content">
+        
+        <div style="margin-bottom: 2rem;">
+          <a href="/owner/applications.html" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+            <span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
+            <span>Back to Applications</span>
+          </a>
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem;">
+                <h1 id="app-number-heading" style="font-size: 2rem; margin: 0;">Filing Details</h1>
+                <span id="app-status-badge"></span>
+              </div>
+              <p id="app-subtitle" style="font-size: 0.95rem;">Loading specifications...</p>
+            </div>
+
+            <!-- Resubmit Button (Shown only when CORRECTION_REQUIRED) -->
+            <div id="correction-action-panel" style="display: none;">
+              <button onclick="handleResubmit()" class="btn btn-primary" style="box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                <span class="material-symbols-outlined" style="font-size: 18px;">send</span>
+                <span>Resubmit Corrected Application</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Officer Correction Banner (If CORRECTION_REQUIRED) -->
+        <div id="correction-banner" style="display: none; background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem;">
+          <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <span class="material-symbols-outlined" style="color: var(--state-error); font-size: 24px; margin-top: 2px;">error</span>
+            <div style="flex: 1;">
+              <h4 style="color: var(--state-error); margin-bottom: 0.35rem;">Action Required: Officer Revision Request</h4>
+              <p id="correction-remarks" style="color: #991b1b; font-size: 0.9rem; line-height: 1.5; font-weight: 500;"></p>
+              <span style="font-size: 0.75rem; color: #b91c1c; display: block; margin-top: 0.5rem;">
+                Please review the rejected documents or modify information below, then click "Resubmit Corrected Application".
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-details-grid">
+          
+          <!-- Left Column: Specs, Documents, Form Response -->
+          <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- Summary Card -->
+            <div class="card">
+              <h3 class="card-title" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
+                Entity &amp; Regulatory Jurisdiction
+              </h3>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                <div>
+                  <span class="form-label">Business Entity</span>
+                  <div id="detail-biz-name" style="font-weight: 700; font-size: 1.05rem; margin-top: 4px;">—</div>
+                  <div id="detail-biz-addr" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">—</div>
+                </div>
+
+                <div>
+                  <span class="form-label">Responsible Department</span>
+                  <div id="detail-dept-name" style="font-weight: 700; font-size: 1.05rem; margin-top: 4px; color: var(--accent-teal);">—</div>
+                  <div id="detail-dept-code" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">—</div>
+                </div>
+
+                <div>
+                  <span class="form-label">Permit Framework</span>
+                  <div id="detail-lic-name" style="font-weight: 700; font-size: 1rem; margin-top: 4px;">—</div>
+                  <div id="detail-lic-code" style="font-size: 0.8rem; color: var(--text-muted);">—</div>
+                </div>
+
+                <div>
+                  <span class="form-label">Treasury Application Fee</span>
+                  <div id="detail-lic-fee" style="font-weight: 800; font-size: 1.15rem; font-family: var(--font-heading); margin-top: 4px;">—</div>
+                  <div id="detail-payment-status" style="font-size: 0.75rem;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Form Response (Stored in MongoDB) -->
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
+                <h3 class="card-title">Operational Data (MongoDB Payload)</h3>
+                <span class="badge badge-draft" style="font-size: 0.65rem;">Dynamic Document Store</span>
+              </div>
+
+              <div id="form-data-display" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <!-- Key-values rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Uploaded Documents & Verification Results -->
+            <div class="card">
+              <h3 class="card-title" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
+                Uploaded Evidence &amp; Verification Outcomes
+              </h3>
+
+              <div id="docs-list-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                <!-- Documents rendered -->
+              </div>
+            </div>
+
+            <!-- Field Inspection Report (If scheduled / completed) -->
+            <div id="inspection-card" class="card" style="display: none; border-left: 4px solid #2563eb;">
+              <h3 class="card-title" style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #2563eb;">fact_check</span>
+                <span>Municipal On-Site Physical Inspection</span>
+              </h3>
+              <div id="inspection-details-body"></div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Status Timeline & Certificate Quicklink -->
+          <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- Issued Certificate Banner (If APPROVED) -->
+            <div id="approved-cert-card" class="card" style="display: none; background: #000; color: #fff; padding: 2rem; border-radius: var(--radius-xl);">
+              <span class="material-symbols-outlined" style="font-size: 36px; color: var(--accent-mint); margin-bottom: 0.75rem;">verified</span>
+              <h3 style="color: #fff; font-size: 1.25rem; margin-bottom: 0.5rem;">Permit Officially Issued!</h3>
+              <p style="font-size: 0.85rem; color: #d4d4d8; line-height: 1.5; margin-bottom: 1.5rem;">
+                Your statutory business license certificate with verifiable public QR code is now active.
+              </p>
+              <a id="view-certificate-btn" href="#" class="btn btn-teal" style="width: 100%;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">badge</span>
+                <span>View Verifiable Certificate</span>
+              </a>
+            </div>
+
+            <!-- Status History Timeline -->
+            <div class="card">
+              <h3 class="card-title" style="margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
+                Adjudication Timeline
+              </h3>
+
+              <div id="timeline-container" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <!-- Timeline items -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let currentApp = null;
+    let appId = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderSidebar('applications', 'owner');
+      renderTopbar('Application Adjudication Tracker');
+
+      const params = new URLSearchParams(window.location.search);
+      appId = params.get('id');
+
+      if (!appId) {
+        showToast('No application specified.', 'error');
+        window.location.href = '/owner/applications.html';
+        return;
+      }
+
+      await loadApplication(appId);
+    });
+
+    async function loadApplication(id) {
+      try {
+        const res = await API.get(`/applications/${id}`);
+        if (!res.success || !res.data) throw new Error('Application record not found');
+
+        currentApp = res.data;
+
+        document.getElementById('app-number-heading').textContent = currentApp.application_number;
+        document.getElementById('app-subtitle').textContent = `Filed on ${formatDate(currentApp.submission_date || currentApp.created_at)} • Type: ${currentApp.application_type}`;
+        document.getElementById('app-status-badge').innerHTML = formatStatusBadge(currentApp.status);
+
+        document.getElementById('detail-biz-name').textContent = currentApp.business_name;
+        document.getElementById('detail-biz-addr').textContent = `${currentApp.address_line1}, ${currentApp.city}, ${currentApp.state} ${currentApp.postal_code}`;
+        document.getElementById('detail-dept-name').textContent = currentApp.department_name;
+        document.getElementById('detail-dept-code').textContent = `Department Code: ${currentApp.department_code}`;
+        document.getElementById('detail-lic-name').textContent = currentApp.license_name;
+        document.getElementById('detail-lic-code').textContent = `Statutory Code: ${currentApp.license_code}`;
+        document.getElementById('detail-lic-fee').textContent = formatCurrency(currentApp.fee);
+
+        // Payment status
+        const payStatusDiv = document.getElementById('detail-payment-status');
+        if (currentApp.payments && currentApp.payments.length > 0) {
+          const p = currentApp.payments[0];
+          payStatusDiv.innerHTML = `<span style="color:var(--state-success);font-weight:600;">✓ Paid: ${p.transaction_reference}</span>`;
+        } else {
+          payStatusDiv.innerHTML = '<span style="color:var(--text-muted);">Payment pending</span>';
+        }
+
+        // Correction banner
+        if (currentApp.status === 'CORRECTION_REQUIRED') {
+          document.getElementById('correction-banner').style.display = 'block';
+          document.getElementById('correction-action-panel').style.display = 'block';
+          document.getElementById('correction-remarks').textContent = currentApp.decision_remarks || 'Please replace invalid or missing supporting documents.';
+        } else {
+          document.getElementById('correction-banner').style.display = 'none';
+          document.getElementById('correction-action-panel').style.display = 'none';
+        }
+
+        // Approved Certificate Card
+        if (currentApp.status === 'APPROVED') {
+          // Check if there is an issued license linked
+          const licRes = await API.get('/licenses', { search: currentApp.business_name });
+          if (licRes.success && licRes.data.length > 0) {
+            const match = licRes.data.find(l => l.application_id === currentApp.id);
+            if (match) {
+              document.getElementById('approved-cert-card').style.display = 'block';
+              document.getElementById('view-certificate-btn').href = `/owner/license-certificate.html?id=${match.id}`;
+            }
+          }
+        }
+
+        // Render Dynamic MongoDB Form Data
+        renderFormData(currentApp.formData);
+
+        // Render Uploaded Documents
+        renderDocuments(currentApp.documents || []);
+
+        // Render Inspection Details
+        renderInspection(currentApp.inspections || []);
+
+        // Render Status History Timeline
+        renderTimeline(currentApp.statusHistory || []);
+
+      } catch (err) {
+        showToast('Error loading application: ' + err.message, 'error');
+      }
+    }
+
+    function renderFormData(data) {
+      const container = document.getElementById('form-data-display');
+      if (!data || Object.keys(data).length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); grid-column: 1 / -1;">No custom form data recorded.</p>';
+        return;
+      }
+
+      container.innerHTML = Object.entries(data).map(([k, v]) => `
+        <div style="padding: 0.75rem 1rem; background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+          <span class="form-label" style="font-size: 0.65rem;">${k.replace(/([A-Z])/g, ' $1').toUpperCase()}</span>
+          <div style="font-weight: 600; font-size: 0.9rem; margin-top: 2px;">${v}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderDocuments(docs) {
+      const container = document.getElementById('docs-list-container');
+      if (docs.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">No supporting documents uploaded.</p>';
+        return;
+      }
+
+      container.innerHTML = docs.map(d => `
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: #ffffff;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="material-symbols-outlined" style="font-size: 24px; color: var(--accent-teal);">description</span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">${d.originalFilename}</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">
+                Code: <strong>${d.requirementCode}</strong> • Size: ${(d.fileSize / 1024).toFixed(0)} KB • SHA-256: ${d.checksum ? d.checksum.substring(0, 10) + '...' : 'Verified'}
+              </div>
+              ${d.reviewNotes ? `<div style="font-size: 0.75rem; color: ${d.verificationStatus === 'REJECTED' ? 'var(--state-error)' : 'var(--state-success)'}; margin-top: 4px;"><strong>Officer Note:</strong> ${d.reviewNotes}</div>` : ''}
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; margin-top: 0.5rem;">
+            ${formatStatusBadge(d.verificationStatus)}
+            <a href="/api/applications/download/${d.storageKey}" target="_blank" class="btn btn-secondary btn-sm" title="View Document">
+              <span class="material-symbols-outlined" style="font-size: 14px;">visibility</span>
+            </a>
+            ${currentApp.status === 'CORRECTION_REQUIRED' && d.verificationStatus === 'REJECTED' ? `
+              <input type="file" id="replace-${d._id}" style="display:none;" onchange="replaceDoc('${d.requirementCode}', this)">
+              <button onclick="document.getElementById('replace-${d._id}').click()" class="btn btn-primary btn-sm">Replace</button>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function replaceDoc(reqCode, input) {
+      if (!input.files || input.files.length === 0) return;
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('document', file);
+      formData.append('requirementCode', reqCode);
+
+      try {
+        await API.post(`/applications/${appId}/documents`, formData);
+        showToast(`Replaced document for ${reqCode}`, 'success');
+        await loadApplication(appId);
+      } catch (err) {
+        showToast('Upload failed: ' + err.message, 'error');
+      }
+    }
+
+    function renderInspection(inspections) {
+      const card = document.getElementById('inspection-card');
+      const body = document.getElementById('inspection-details-body');
+      if (inspections.length === 0) {
+        card.style.display = 'none';
+        return;
+      }
+
+      card.style.display = 'block';
+      const insp = inspections[0];
+
+      body.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <div>
+            <div style="font-weight: 700; font-size: 1rem;">Inspector: ${insp.inspector_name}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Scheduled Date: ${formatDate(insp.scheduled_date)}</div>
+          </div>
+          <div>${formatStatusBadge(insp.outcome)}</div>
+        </div>
+        ${insp.summary_notes ? `<p style="font-size: 0.85rem; color: var(--text-secondary); background: var(--bg-secondary); padding: 0.75rem; border-radius: var(--radius-sm);"><strong>Audit Findings:</strong> ${insp.summary_notes}</p>` : ''}
+      `;
+    }
+
+    function renderTimeline(history) {
+      const container = document.getElementById('timeline-container');
+      if (history.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">No status transitions recorded.</p>';
+        return;
+      }
+
+      container.innerHTML = history.map((item, idx) => `
+        <div style="display: flex; gap: 12px; position: relative;">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 14px; height: 14px; border-radius: 50%; background: ${idx === history.length - 1 ? 'var(--accent-teal)' : '#d4d4d8'}; border: 2px solid #ffffff; box-shadow: 0 0 0 1px #a1a1aa;"></div>
+            ${idx < history.length - 1 ? '<div style="width: 2px; flex: 1; background: #e4e4e7; margin: 4px 0;"></div>' : ''}
+          </div>
+          <div style="padding-bottom: 1.25rem;">
+            <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary);">${item.to_status}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">${formatDate(item.created_at)} by ${item.changed_by_name}</div>
+            ${item.remarks ? `<div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 3px;">${item.remarks}</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function handleResubmit() {
+      if (!confirm('Confirm that all requested corrections and document replacements have been made before resubmitting?')) return;
+
+      try {
+        await API.post(`/applications/${appId}/submit`, {});
+        showToast('Application successfully resubmitted to the officer desk!', 'success');
+        await loadApplication(appId);
+      } catch (err) {
+        showToast(err.message || 'Resubmission failed.', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

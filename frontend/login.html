@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — BizPermit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+</head>
+
+<body style="background-color: var(--bg-secondary); min-height: 100vh; display: flex; flex-direction: column;">
+
+  <header id="public-header" class="public-header"></header>
+
+  <main style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;">
+    <div style="width: 100%; max-width: 480px;">
+
+      <div class="card"
+        style="padding: 2.5rem 2rem; border-radius: var(--radius-xl); box-shadow: var(--shadow-elevated);">
+
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <div class="brand-icon"
+            style="margin: 0 auto 1rem; width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; overflow: visible;">
+            <span class="material-symbols-outlined"
+              style="font-size: 28px; color: #fff; line-height: 1; font-variation-settings: 'FILL' 1;">lock</span>
+          </div>
+          <h2 style="font-size: 1.75rem; margin-bottom: 0.35rem;">Sign In to BizPermit</h2>
+          <p style="font-size: 0.85rem;">Access your commercial filing portal and dashboard</p>
+        </div>
+
+        <div id="login-error"
+          style="display: none; padding: 0.85rem 1rem; background-color: var(--state-error-bg); border: 1px solid var(--state-error-border); color: var(--state-error); border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1.5rem;">
+        </div>
+
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label required">Email Address</label>
+            <div style="position: relative; display: flex; align-items: center;">
+              <span class="material-symbols-outlined"
+                style="position: absolute; left: 12px; color: var(--text-muted); font-size: 18px;">mail</span>
+              <input type="email" id="login-email" class="form-control" style="padding-left: 38px;" required
+                placeholder="name@domain.com">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label class="form-label required">Password</label>
+              <a href="/forgot-password.html"
+                style="font-size: 0.75rem; color: var(--accent-teal); font-weight: 600;">Forgot password?</a>
+            </div>
+            <div style="position: relative; display: flex; align-items: center;">
+              <span class="material-symbols-outlined"
+                style="position: absolute; left: 12px; color: var(--text-muted); font-size: 18px;">key</span>
+              <input type="password" id="login-password" class="form-control"
+                style="padding-left: 38px; padding-right: 40px;" required placeholder="••••••••">
+              <button type="button" onclick="togglePasswordVisibility()"
+                style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: var(--text-muted);">
+                <span id="eye-icon" class="material-symbols-outlined" style="font-size: 18px;">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <div
+            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; font-size: 0.8rem;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-secondary);">
+              <input type="checkbox" id="remember-me" style="accent-color: var(--bg-obsidian);">
+              <span>Keep session active</span>
+            </label>
+          </div>
+
+          <button id="login-submit-btn" type="submit" class="btn btn-primary"
+            style="width: 100%; padding: 0.85rem; font-size: 0.95rem;">
+            <span>Sign In</span>
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+          </button>
+        </form>
+
+        <div style="margin-top: 1.75rem; text-align: center; font-size: 0.85rem; color: var(--text-secondary);">
+          Don't have an enterprise account?
+          <a href="/register.html"
+            style="color: var(--text-primary); font-weight: 700; text-decoration: underline;">Create Account</a>
+        </div>
+
+        <!-- Academic Demo One-Click Fill Options -->
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-default);">
+          <div
+            style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); text-align: center; margin-bottom: 0.85rem;">
+            Quick Fill Demo Credentials
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button type="button" class="btn btn-secondary btn-sm"
+              onclick="fillCreds('owner@bizpermit.demo', 'Owner@1234')">
+              <span>Business Owner</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm"
+              onclick="fillCreds('officer@bizpermit.demo', 'Officer@1234')">
+              <span>Licensing Officer</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm"
+              onclick="fillCreds('inspector@bizpermit.demo', 'Inspector@1234')">
+              <span>Field Inspector</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm"
+              onclick="fillCreds('admin@bizpermit.demo', 'Admin@1234')">
+              <span>Administrator</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer id="public-footer" class="public-footer"></footer>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPublicHeader('signin');
+      renderPublicFooter();
+    });
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('login-password');
+      const icon = document.getElementById('eye-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    }
+
+    function fillCreds(email, password) {
+      document.getElementById('login-email').value = email;
+      document.getElementById('login-password').value = password;
+      showToast(`Selected demo credentials for: ${email}`, 'info');
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-error');
+      const submitBtn = document.getElementById('login-submit-btn');
+
+      errorDiv.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Verifying...</span>';
+
+      try {
+        const res = await API.post('/auth/login', { email, password });
+        if (res.success && res.data) {
+          API.setToken(res.data.token);
+          API.setUser(res.data.user);
+          showToast(`Welcome back, ${res.data.user.full_name}!`, 'success');
+
+          // Redirect based on roles or URL parameter
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirect = urlParams.get('redirect') || Auth.getDefaultRedirect(res.data.user.roles);
+          setTimeout(() => {
+            window.location.href = redirect;
+          }, 400);
+        }
+      } catch (err) {
+        errorDiv.textContent = err.message || 'Invalid email or password.';
+        errorDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Sign In</span><span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>';
+      }
+    }
+  </script>
+</body>
+
+</html>

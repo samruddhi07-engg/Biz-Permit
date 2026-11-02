@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Business Account — BizPermit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+</head>
+<body style="background-color: var(--bg-secondary); min-height: 100vh; display: flex; flex-direction: column;">
+
+  <header id="public-header" class="public-header"></header>
+
+  <main style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;">
+    <div style="width: 100%; max-width: 520px;">
+      
+      <div class="card" style="padding: 2.5rem 2rem; border-radius: var(--radius-xl); box-shadow: var(--shadow-elevated);">
+        
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <div class="brand-icon" style="margin: 0 auto 1rem; width: 44px; height: 44px; border-radius: 12px;">
+            <span class="material-symbols-outlined" style="font-size: 26px;">person_add</span>
+          </div>
+          <h2 style="font-size: 1.75rem; margin-bottom: 0.35rem;">Create Business Account</h2>
+          <p style="font-size: 0.85rem;">Register to submit filings, upload documents, and track permits</p>
+        </div>
+
+        <div id="register-error" style="display: none; padding: 0.85rem 1rem; background-color: var(--state-error-bg); border: 1px solid var(--state-error-border); color: var(--state-error); border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1.5rem;"></div>
+
+        <form id="register-form" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label class="form-label required">Primary Applicant Full Name</label>
+            <input type="text" id="reg-name" class="form-control" required placeholder="e.g. Marcus Vance">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Official Email Address</label>
+            <input type="email" id="reg-email" class="form-control" required placeholder="e.g. marcus@company.com">
+            <span class="form-helper">This address will receive verified licensing notices.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Contact Phone Number</label>
+            <input type="tel" id="reg-phone" class="form-control" placeholder="+1 (555) 000-0000">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label required">Password</label>
+              <input type="password" id="reg-password" class="form-control" required placeholder="Min 6 characters">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Confirm Password</label>
+              <input type="password" id="reg-confirm" class="form-control" required placeholder="Re-enter password">
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.5rem; font-size: 0.8rem;">
+            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; color: var(--text-secondary);">
+              <input type="checkbox" id="reg-terms" required style="accent-color: var(--bg-obsidian); margin-top: 3px;">
+              <span>I acknowledge that this filing portal operates under municipal licensure guidelines for regulatory submissions.</span>
+            </label>
+          </div>
+
+          <button id="register-submit-btn" type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 0.95rem;">
+            <span>Complete Registration</span>
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+          </button>
+        </form>
+
+        <div style="margin-top: 1.75rem; text-align: center; font-size: 0.85rem; color: var(--text-secondary);">
+          Already registered? 
+          <a href="/login.html" style="color: var(--text-primary); font-weight: 700; text-decoration: underline;">Sign In</a>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer id="public-footer" class="public-footer"></footer>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPublicHeader('getstarted');
+      renderPublicFooter();
+    });
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const fullName = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const phone = document.getElementById('reg-phone').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const confirm = document.getElementById('reg-confirm').value;
+      const errorDiv = document.getElementById('register-error');
+      const submitBtn = document.getElementById('register-submit-btn');
+
+      if (password !== confirm) {
+        errorDiv.textContent = 'Passwords do not match.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      errorDiv.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Creating Account...</span>';
+
+      try {
+        const res = await API.post('/auth/register', { fullName, email, phone, password });
+        if (res.success && res.data) {
+          API.setToken(res.data.token);
+          API.setUser(res.data.user);
+          showToast('Account registered successfully! Redirecting to workspace...', 'success');
+          setTimeout(() => {
+            window.location.href = '/owner/dashboard.html';
+          }, 600);
+        }
+      } catch (err) {
+        errorDiv.textContent = err.message || 'Registration failed.';
+        errorDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Complete Registration</span><span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>';
+      }
+    }
+  </script>
+</body>
+</html>

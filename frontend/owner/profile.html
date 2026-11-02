@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile — BizPermit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content" style="max-width:860px;">
+        <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Account</span>
+        <h1 style="font-size:1.875rem;margin-top:0.25rem;margin-bottom:2rem;">My Profile</h1>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+
+          <!-- Profile Info Card -->
+          <div class="card" style="padding:1.75rem;grid-column:1/-1;">
+            <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border-default);">
+              <div id="profile-avatar" style="width:72px;height:72px;border-radius:50%;background:var(--bg-obsidian);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.75rem;font-weight:800;font-family:var(--font-heading);flex-shrink:0;">—</div>
+              <div>
+                <div id="profile-name" style="font-size:1.25rem;font-weight:800;font-family:var(--font-heading);">—</div>
+                <div id="profile-email" style="font-size:0.875rem;color:var(--text-secondary);margin-top:0.25rem;">—</div>
+                <div id="profile-role-badge" style="margin-top:0.5rem;"></div>
+              </div>
+              <div style="margin-left:auto;text-align:right;">
+                <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Member Since</div>
+                <div id="profile-joined" style="font-size:0.875rem;font-weight:600;margin-top:0.25rem;">—</div>
+              </div>
+            </div>
+
+            <form id="profile-form">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="p-fname">First Name</label>
+                  <input type="text" id="p-fname" class="form-control" placeholder="First name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="p-lname">Last Name</label>
+                  <input type="text" id="p-lname" class="form-control" placeholder="Last name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="p-email">Email Address</label>
+                  <input type="email" id="p-email" class="form-control" disabled style="background:var(--bg-secondary);cursor:not-allowed;">
+                  <span style="font-size:0.72rem;color:var(--text-muted);">Email cannot be changed.</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="p-phone">Phone Number</label>
+                  <input type="tel" id="p-phone" class="form-control" placeholder="+91 9876543210">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" id="profile-save-btn">
+                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">save</span>
+                Save Changes
+              </button>
+            </form>
+          </div>
+
+          <!-- Change Password -->
+          <div class="card" style="padding:1.75rem;">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+              <span class="material-symbols-outlined" style="font-size:22px;color:var(--text-muted);">lock</span>
+              <h2 style="font-size:1rem;font-weight:700;margin:0;">Change Password</h2>
+            </div>
+            <form id="password-form">
+              <div class="form-group">
+                <label class="form-label" for="pw-current">Current Password</label>
+                <input type="password" id="pw-current" class="form-control" placeholder="••••••••" autocomplete="current-password">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="pw-new">New Password</label>
+                <input type="password" id="pw-new" class="form-control" placeholder="••••••••" autocomplete="new-password">
+                <span style="font-size:0.72rem;color:var(--text-muted);">Minimum 8 characters, include uppercase & number.</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="pw-confirm">Confirm New Password</label>
+                <input type="password" id="pw-confirm" class="form-control" placeholder="••••••••" autocomplete="new-password">
+              </div>
+              <button type="submit" class="btn btn-secondary" id="pw-save-btn">Update Password</button>
+            </form>
+          </div>
+
+          <!-- Account Info -->
+          <div class="card" style="padding:1.75rem;">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+              <span class="material-symbols-outlined" style="font-size:22px;color:var(--text-muted);">manage_accounts</span>
+              <h2 style="font-size:1rem;font-weight:700;margin:0;">Account Details</h2>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--bg-secondary);border-radius:8px;">
+                <div>
+                  <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Account ID</div>
+                  <div id="acc-id" style="font-size:0.875rem;font-weight:600;margin-top:2px;">—</div>
+                </div>
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--text-muted);">badge</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--bg-secondary);border-radius:8px;">
+                <div>
+                  <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Account Status</div>
+                  <div id="acc-status" style="font-size:0.875rem;font-weight:600;margin-top:2px;color:var(--state-success);">Active</div>
+                </div>
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--state-success);">verified_user</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--bg-secondary);border-radius:8px;">
+                <div>
+                  <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Role</div>
+                  <div id="acc-role" style="font-size:0.875rem;font-weight:600;margin-top:2px;">—</div>
+                </div>
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--text-muted);">person</span>
+              </div>
+              <div style="margin-top:0.5rem;padding-top:1rem;border-top:1px solid var(--border-default);">
+                <button class="btn btn-secondary btn-sm" onclick="handleLogout()" style="width:100%;justify-content:center;display:flex;align-items:center;gap:0.5rem;color:var(--state-error);">
+                  <span class="material-symbols-outlined" style="font-size:16px;">logout</span> Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await requireAuth('OWNER');
+      renderSidebar('profile','OWNER');
+      renderTopbar();
+      loadProfile();
+
+      document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('profile-save-btn');
+        btn.disabled = true;
+        btn.textContent = 'Saving…';
+        try {
+          const res = await api.put('/api/auth/profile', {
+            firstName: document.getElementById('p-fname').value,
+            lastName: document.getElementById('p-lname').value,
+            phone: document.getElementById('p-phone').value
+          });
+          if (res.success) { showToast('Profile updated successfully!', 'success'); loadProfile(); }
+          else throw new Error(res.error?.message || 'Failed to update profile');
+        } catch(err) { showToast(err.message, 'error'); }
+        finally { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">save</span> Save Changes'; }
+      });
+
+      document.getElementById('password-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newPw = document.getElementById('pw-new').value;
+        const confirmPw = document.getElementById('pw-confirm').value;
+        if (newPw !== confirmPw) { showToast('Passwords do not match.', 'error'); return; }
+        if (newPw.length < 8) { showToast('Password must be at least 8 characters.', 'error'); return; }
+        const btn = document.getElementById('pw-save-btn');
+        btn.disabled = true;
+        btn.textContent = 'Updating…';
+        try {
+          const res = await api.put('/api/auth/change-password', {
+            currentPassword: document.getElementById('pw-current').value,
+            newPassword: newPw
+          });
+          if (res.success) {
+            showToast('Password updated successfully!', 'success');
+            document.getElementById('password-form').reset();
+          } else throw new Error(res.error?.message || 'Failed to update password');
+        } catch(err) { showToast(err.message, 'error'); }
+        finally { btn.disabled = false; btn.textContent = 'Update Password'; }
+      });
+    });
+
+    function loadProfile() {
+      const session = getSession();
+      if (!session) return;
+      const u = session.user;
+      const name = ((u.firstName||u.first_name||'') + ' ' + (u.lastName||u.last_name||'')).trim();
+      document.getElementById('profile-avatar').textContent = (name[0] || u.email[0] || '?').toUpperCase();
+      document.getElementById('profile-name').textContent = name || u.email;
+      document.getElementById('profile-email').textContent = u.email;
+      document.getElementById('profile-role-badge').innerHTML = '<span class="badge badge-success">' + (u.roles?.[0] || u.role || 'OWNER') + '</span>';
+      document.getElementById('profile-joined').textContent = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN',{year:'numeric',month:'long'}) : '—';
+      document.getElementById('p-fname').value = u.firstName || u.first_name || '';
+      document.getElementById('p-lname').value = u.lastName || u.last_name || '';
+      document.getElementById('p-email').value = u.email;
+      document.getElementById('p-phone').value = u.phone || '';
+      document.getElementById('acc-id').textContent = '#' + String(u.id).padStart(6,'0');
+      document.getElementById('acc-role').textContent = (u.roles?.[0] || u.role || 'OWNER');
+    }
+  </script>
+</body>
+</html>

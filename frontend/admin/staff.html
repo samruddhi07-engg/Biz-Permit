@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Management — BizPermit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content" style="max-width:900px;">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:2rem;">
+          <div>
+            <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Human Resources</span>
+            <h1 style="font-size:1.875rem;margin-top:0.25rem;">Staff Management</h1>
+            <p style="color:var(--text-secondary);">Create and manage Licensing Officer and Field Inspector accounts.</p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+          <!-- Create Staff Form -->
+          <div class="card" style="padding:1.75rem;">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+              <span class="material-symbols-outlined" style="font-size:22px;color:var(--accent-teal);">person_add</span>
+              <h2 style="font-size:1rem;font-weight:700;margin:0;">Create Staff Account</h2>
+            </div>
+            <form id="create-staff-form">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="s-fname">First Name *</label>
+                  <input type="text" id="s-fname" class="form-control" required placeholder="First name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="s-lname">Last Name *</label>
+                  <input type="text" id="s-lname" class="form-control" required placeholder="Last name">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="s-email">Email Address *</label>
+                <input type="email" id="s-email" class="form-control" required placeholder="officer@municipality.gov">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="s-phone">Phone Number</label>
+                <input type="text" id="s-phone" class="form-control" placeholder="+91 9876543210">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="s-role">Staff Role *</label>
+                <select id="s-role" class="form-control" required>
+                  <option value="">Select role…</option>
+                  <option value="OFFICER">Licensing Officer</option>
+                  <option value="INSPECTOR">Field Inspector</option>
+                  <option value="ADMIN">Administrator</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="s-dept">Department</label>
+                <select id="s-dept" class="form-control">
+                  <option value="">Select department…</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="s-password">Initial Password *</label>
+                <input type="password" id="s-password" class="form-control" required placeholder="Minimum 8 characters">
+              </div>
+              <button type="submit" class="btn btn-primary" id="create-staff-btn" style="width:100%;justify-content:center;">
+                <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">person_add</span> Create Account
+              </button>
+            </form>
+          </div>
+
+          <!-- Existing Staff List -->
+          <div class="card" style="padding:0;overflow:hidden;">
+            <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-default);">
+              <h2 style="font-size:0.95rem;font-weight:700;margin:0;">Current Staff</h2>
+            </div>
+            <div id="staff-list" style="max-height:600px;overflow-y:auto;"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await requireAuth('ADMIN');
+      renderSidebar('staff','ADMIN');
+      renderTopbar();
+      await loadDepts();
+      await loadStaff();
+
+      document.getElementById('create-staff-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('create-staff-btn');
+        btn.disabled = true; btn.textContent = 'Creating…';
+        try {
+          const res = await api.post('/api/admin/staff', {
+            firstName: document.getElementById('s-fname').value,
+            lastName: document.getElementById('s-lname').value,
+            email: document.getElementById('s-email').value,
+            phone: document.getElementById('s-phone').value,
+            role: document.getElementById('s-role').value,
+            departmentId: document.getElementById('s-dept').value || null,
+            password: document.getElementById('s-password').value
+          });
+          if (res.success) {
+            showToast('Staff account created successfully!', 'success');
+            document.getElementById('create-staff-form').reset();
+            await loadStaff();
+          } else throw new Error(res.error?.message || 'Failed to create account');
+        } catch(err) { showToast(err.message, 'error'); }
+        finally { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">person_add</span> Create Account'; }
+      });
+    });
+
+    async function loadDepts() {
+      try {
+        const res = await api.get('/api/admin/departments');
+        const select = document.getElementById('s-dept');
+        (res.data || []).forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.id; opt.textContent = d.name;
+          select.appendChild(opt);
+        });
+      } catch(e) {}
+    }
+
+    async function loadStaff() {
+      const el = document.getElementById('staff-list');
+      el.innerHTML = '<div style="padding:2rem;text-align:center;"><div style="height:40px;background:var(--bg-secondary);border-radius:6px;animation:pulse 1.5s infinite;margin-bottom:0.75rem;"></div><div style="height:40px;background:var(--bg-secondary);border-radius:6px;animation:pulse 1.5s infinite;"></div></div>';
+      try {
+        const res = await api.get('/api/admin/users?roles=OFFICER,INSPECTOR,ADMIN');
+        const staff = res.success ? (res.data || []).filter(u => (u.roles||[u.role]).some(r => ['OFFICER','INSPECTOR','ADMIN'].includes(r))) : [];
+        if (!staff.length) { el.innerHTML = '<p style="padding:2rem;text-align:center;color:var(--text-muted);font-size:0.85rem;">No staff accounts yet.</p>'; return; }
+        const roleColors = {OFFICER:'badge-warning',INSPECTOR:'',ADMIN:'badge-error'};
+        el.innerHTML = staff.map(u => {
+          const name = ((u.first_name||'') + ' ' + (u.last_name||'')).trim() || u.email;
+          const roles = u.roles || [u.role] || [];
+          const initials = (name.split(' ').map(w=>w[0]).join('').substring(0,2)||'U').toUpperCase();
+          return `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1.25rem;border-bottom:1px solid var(--border-default);">
+            <div style="width:36px;height:36px;background:var(--bg-obsidian);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:800;font-family:var(--font-heading);flex-shrink:0;">${initials}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:600;font-size:0.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+              <div style="font-size:0.7rem;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${u.email}</div>
+            </div>
+            <div>${roles.filter(r=>['OFFICER','INSPECTOR','ADMIN'].includes(r)).map(r => `<span class="badge ${roleColors[r]||''}" style="font-size:0.65rem;">${r}</span>`).join('')}</div>
+          </div>`;
+        }).join('');
+      } catch(e) { el.innerHTML = '<p style="padding:2rem;text-align:center;color:var(--text-muted);">Failed to load staff.</p>'; }
+    }
+  </script>
+</body>
+</html>

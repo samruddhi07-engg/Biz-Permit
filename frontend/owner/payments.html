@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payments & Receipts — BizPermit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <style>
+    .pay-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+    @media (max-width: 700px) { .pay-kpi-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .pay-kpi-grid { grid-template-columns: 1fr; } }
+
+    .pay-kpi {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .pay-kpi .label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--color-muted); margin-bottom:0.5rem; }
+    .pay-kpi .value { font-size:1.875rem; font-weight:800; font-family:var(--font-heading); line-height:1; }
+    .pay-kpi .sub { font-size:0.75rem; color:var(--color-text-secondary); margin-top:0.35rem; }
+
+    .demo-notice {
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      border-radius: 10px;
+      padding: 0.875rem 1.25rem;
+      margin-bottom: 1.75rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--color-border);
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 0.375rem 0.875rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid var(--color-border);
+      background: transparent;
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      transition: all 0.15s;
+    }
+    .tab-btn:hover { background: var(--color-surface-alt); }
+    .tab-btn.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    /* Receipt Print styles */
+    @media print {
+      body > *:not(#receipt-modal) { display: none !important; }
+      #receipt-modal { display: block !important; position: static !important; background: none !important; }
+      .modal-box { box-shadow: none !important; max-width: 100% !important; }
+      .modal-header, .modal-footer { display: none !important; }
+      #receipt-print-area { border: 1px solid #ccc !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content">
+
+        <!-- Page Header -->
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1.75rem;">
+          <div>
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--color-primary);">Financial Records</div>
+            <h1 style="font-size:1.875rem;font-weight:800;font-family:var(--font-heading);margin:0.2rem 0 0;letter-spacing:-0.02em;">Payments & Receipts</h1>
+            <p style="color:var(--color-text-secondary);margin-top:0.3rem;">Simulated treasury fee payments for academic demonstration purposes only.</p>
+          </div>
+        </div>
+
+        <!-- Demo Notice -->
+        <div class="demo-notice">
+          <span class="material-symbols-outlined" style="color:#b45309;font-size:20px;margin-top:1px;flex-shrink:0;">info</span>
+          <div>
+            <div style="font-weight:700;font-size:0.875rem;color:#92400e;">Demonstration Payments Only</div>
+            <div style="font-size:0.8rem;color:#92400e;margin-top:0.2rem;">All transactions shown here are simulated for academic purposes. No real financial transactions are processed. Do not enter actual payment details.</div>
+          </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="pay-kpi-grid">
+          <div class="pay-kpi">
+            <div class="label">Total Paid</div>
+            <div id="stat-total-paid" class="value" style="color:var(--color-text);">—</div>
+            <div class="sub">Completed transactions</div>
+          </div>
+          <div class="pay-kpi">
+            <div class="label">Completed Transactions</div>
+            <div id="stat-txn-count" class="value" style="color:var(--color-success);">—</div>
+            <div class="sub">Successful payments</div>
+          </div>
+          <div class="pay-kpi">
+            <div class="label">Pending</div>
+            <div id="stat-pending-count" class="value" style="color:var(--color-warning);">—</div>
+            <div class="sub">Awaiting payment</div>
+          </div>
+        </div>
+
+        <!-- Payments Card -->
+        <div class="card" style="overflow:hidden;">
+
+          <!-- Filter Tabs + Search -->
+          <div class="filter-tabs">
+            <button class="tab-btn active" data-filter="" onclick="setFilter(this, '')">All</button>
+            <button class="tab-btn" data-filter="COMPLETED" onclick="setFilter(this, 'COMPLETED')">Completed</button>
+            <button class="tab-btn" data-filter="PENDING" onclick="setFilter(this, 'PENDING')">Pending</button>
+            <button class="tab-btn" data-filter="FAILED" onclick="setFilter(this, 'FAILED')">Failed</button>
+            <div style="flex:1;min-width:160px;position:relative;max-width:280px;margin-left:auto;">
+              <span class="material-symbols-outlined" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--color-muted);">search</span>
+              <input id="pay-search" type="text" placeholder="Search ref or application..." class="form-control" style="padding-left:2.25rem;font-size:0.85rem;" oninput="applyFilters()">
+            </div>
+          </div>
+
+          <!-- Loading -->
+          <div id="pay-loading" style="padding:3rem 1.5rem;">
+            <div style="height:48px;border-radius:8px;background:var(--color-surface-alt);animation:pulse 1.5s infinite;margin-bottom:0.75rem;"></div>
+            <div style="height:48px;border-radius:8px;background:var(--color-surface-alt);animation:pulse 1.5s infinite;margin-bottom:0.75rem;opacity:0.7;"></div>
+            <div style="height:48px;border-radius:8px;background:var(--color-surface-alt);animation:pulse 1.5s infinite;opacity:0.4;"></div>
+          </div>
+
+          <!-- Empty -->
+          <div id="pay-empty" style="display:none;padding:4rem 2rem;text-align:center;">
+            <span class="material-symbols-outlined" style="font-size:52px;color:var(--color-muted);display:block;margin-bottom:1rem;">receipt_long</span>
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:0.4rem;">No payment records</h3>
+            <p style="color:var(--color-text-secondary);font-size:0.875rem;">Payment records appear after submitting a license application fee.</p>
+          </div>
+
+          <!-- Table -->
+          <div id="pay-table-wrap" style="display:none;overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Transaction Ref</th>
+                  <th>Application</th>
+                  <th>License Type</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Method</th>
+                  <th>Status</th>
+                  <th style="text-align:right;">Receipt</th>
+                </tr>
+              </thead>
+              <tbody id="pay-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Receipt Modal -->
+  <div id="receipt-modal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="receipt-title">
+    <div class="modal-box" style="max-width:540px;">
+      <div class="modal-header">
+        <h3 id="receipt-title" style="font-size:1rem;font-weight:700;">Payment Receipt</h3>
+        <button class="modal-close" onclick="document.getElementById('receipt-modal').style.display='none'" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" id="receipt-body"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="document.getElementById('receipt-modal').style.display='none'">Close</button>
+        <button class="btn btn-primary" onclick="window.print()">
+          <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">print</span> Print
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let allPayments = [];
+    let activeFilter = '';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderSidebar('payments', 'owner');
+      renderTopbar('Payments & Receipts');
+
+      document.querySelectorAll('.modal-overlay').forEach(o => {
+        o.addEventListener('click', e => { if (e.target === o) o.style.display = 'none'; });
+      });
+
+      await loadPayments();
+    });
+
+    async function loadPayments() {
+      try {
+        // Try dedicated payments API first, fall back to applications scraping
+        let payments = [];
+        let statsLoaded = false;
+
+        try {
+          const statsRes = await API.get('/payments/stats');
+          if (statsRes.success && statsRes.data) {
+            const s = statsRes.data;
+            document.getElementById('stat-total-paid').textContent = formatINR(s.totalPaid || 0);
+            document.getElementById('stat-txn-count').textContent = s.completedCount || 0;
+            document.getElementById('stat-pending-count').textContent = s.pendingCount || 0;
+            statsLoaded = true;
+          }
+        } catch(e) {}
+
+        try {
+          const res = await API.get('/payments');
+          if (res.success && res.data) {
+            payments = res.data;
+          }
+        } catch(e) {
+          // Fallback: scrape from applications
+          const appsRes = await API.get('/applications');
+          if (appsRes.success) {
+            const apps = appsRes.data || [];
+            apps.forEach(app => {
+              if (app.payment_status && app.transaction_reference) {
+                payments.push({
+                  id: app.id,
+                  transactionRef: app.transaction_reference,
+                  applicationNumber: app.application_number,
+                  licenseTypeName: app.license_type_name,
+                  amount: app.fee || 0,
+                  paymentDate: app.payment_date || app.submitted_at,
+                  method: 'SIMULATED',
+                  status: app.payment_status || 'COMPLETED',
+                  businessName: app.business_name,
+                  userName: '',
+                  userEmail: ''
+                });
+              }
+            });
+          }
+        }
+
+        allPayments = payments;
+
+        if (!statsLoaded) {
+          const totalPaid = payments.filter(p => p.status === 'COMPLETED').reduce((s, p) => s + Number(p.amount || 0), 0);
+          document.getElementById('stat-total-paid').textContent = formatINR(totalPaid);
+          document.getElementById('stat-txn-count').textContent = payments.filter(p => p.status === 'COMPLETED').length;
+          document.getElementById('stat-pending-count').textContent = payments.filter(p => p.status === 'PENDING').length;
+        }
+
+        document.getElementById('pay-loading').style.display = 'none';
+        applyFilters();
+
+      } catch (e) {
+        console.error('Failed to load payments:', e);
+        document.getElementById('pay-loading').style.display = 'none';
+        document.getElementById('pay-empty').style.display = 'block';
+        document.getElementById('stat-total-paid').textContent = '₹0';
+        document.getElementById('stat-txn-count').textContent = '0';
+        document.getElementById('stat-pending-count').textContent = '0';
+      }
+    }
+
+    function setFilter(btn, filter) {
+      activeFilter = filter;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const search = (document.getElementById('pay-search').value || '').toLowerCase();
+      const filtered = allPayments.filter(p => {
+        const matchFilter = !activeFilter || p.status === activeFilter;
+        const matchSearch = !search || (p.transactionRef || '').toLowerCase().includes(search) || (p.applicationNumber || '').toLowerCase().includes(search);
+        return matchFilter && matchSearch;
+      });
+      renderTable(filtered);
+    }
+
+    function renderTable(payments) {
+      if (!payments.length) {
+        document.getElementById('pay-empty').style.display = 'block';
+        document.getElementById('pay-table-wrap').style.display = 'none';
+        return;
+      }
+      document.getElementById('pay-empty').style.display = 'none';
+      document.getElementById('pay-table-wrap').style.display = 'block';
+
+      const stMap = {
+        COMPLETED: '<span class="badge badge-success">Completed</span>',
+        PENDING:   '<span class="badge badge-draft">Pending</span>',
+        FAILED:    '<span class="badge badge-error">Failed</span>',
+        REFUNDED:  '<span class="badge badge-review">Refunded</span>',
+      };
+
+      document.getElementById('pay-tbody').innerHTML = payments.map(p => `
+        <tr>
+          <td><code style="font-size:0.75rem;background:var(--color-surface-alt);padding:2px 8px;border-radius:4px;font-family:monospace;">${p.transactionRef || '—'}</code></td>
+          <td style="font-size:0.85rem;font-weight:600;">${p.applicationNumber || '—'}</td>
+          <td style="font-size:0.8rem;color:var(--color-text-secondary);">${p.licenseTypeName || '—'}</td>
+          <td style="font-weight:700;font-family:var(--font-heading);font-size:0.95rem;">${formatINR(p.amount || 0)}</td>
+          <td style="font-size:0.8rem;color:var(--color-muted);">${p.paymentDate ? formatDate(p.paymentDate) : '—'}</td>
+          <td><span style="font-size:0.75rem;font-weight:600;color:var(--color-muted);">${p.method || 'SIMULATED'}</span></td>
+          <td>${stMap[p.status] || `<span class="badge">${p.status}</span>`}</td>
+          <td style="text-align:right;">
+            <button class="btn btn-secondary btn-sm" onclick='showReceipt(${JSON.stringify(p)})' style="display:inline-flex;align-items:center;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:15px;">receipt</span>
+              <span style="font-size:0.75rem;">View</span>
+            </button>
+          </td>
+        </tr>`).join('');
+    }
+
+    function showReceipt(p) {
+      const receiptNo = 'RCPT-IN-' + String(p.id || p.appId || Date.now()).padStart(6, '0');
+      const payDate = p.paymentDate ? formatDateTime(p.paymentDate) : '—';
+      const amount = formatINR(p.amount || 0);
+
+      document.getElementById('receipt-body').innerHTML = `
+        <div id="receipt-print-area" style="font-family:var(--font-body);border:1px solid var(--color-border);border-radius:10px;overflow:hidden;">
+          <!-- Header -->
+          <div style="background:var(--color-primary);color:#fff;padding:1.25rem 1.5rem;text-align:center;">
+            <div style="font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;opacity:0.8;margin-bottom:0.25rem;">BizPermit Municipal Portal</div>
+            <div style="font-size:1.2rem;font-weight:800;font-family:var(--font-heading);">Payment Receipt</div>
+            <div style="font-size:0.7rem;opacity:0.7;margin-top:0.25rem;">DEMONSTRATION — NOT AN OFFICIAL GOVERNMENT RECEIPT</div>
+          </div>
+
+          <!-- Receipt Number + Status -->
+          <div style="padding:1rem 1.5rem;background:var(--color-surface-alt);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--color-border);">
+            <div>
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-muted);">Receipt Number</div>
+              <div style="font-weight:700;font-size:0.9rem;">${receiptNo}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-muted);">Payment Status</div>
+              <span class="badge ${p.status === 'COMPLETED' ? 'badge-success' : p.status === 'FAILED' ? 'badge-error' : 'badge-draft'}">${p.status}</span>
+            </div>
+          </div>
+
+          <!-- Details Grid -->
+          <div style="padding:1.25rem 1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div>
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-muted);margin-bottom:0.2rem;">Transaction Reference</div>
+              <div style="font-size:0.85rem;font-weight:600;font-family:monospace;">${p.transactionRef || '—'}</div>
+            </div>
+            <div>
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-muted);margin-bottom:0.2rem;">Payment Date & Time</div>
+              <div style="font-size:0.85rem;">${payDate}</div>
+            </div>
+            <div>
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-muted);margin-bottom:0.2rem;">Application Number</div>
+              <div style="font-size:0.85rem;font-weight:600;">${p.applicationNumber || '—'}</div>
+            </div>
+            <div>
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-muted);margin-bottom:0.2rem;">License Type</div>
+              <div style="font-size:0.85rem;">${p.licenseTypeName || '—'}</div>
+            </div>
+            ${p.businessName ? `<div style="grid-column:1/-1;">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-muted);margin-bottom:0.2rem;">Business Name</div>
+              <div style="font-size:0.85rem;font-weight:600;">${p.businessName}</div>
+            </div>` : ''}
+            <div>
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-muted);margin-bottom:0.2rem;">Payment Method</div>
+              <div style="font-size:0.85rem;">${p.method || 'SIMULATED'}</div>
+            </div>
+          </div>
+
+          <!-- Amount Row -->
+          <div style="padding:1rem 1.5rem;background:var(--color-surface-alt);border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border);display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-weight:700;font-size:0.875rem;">Total Fee Paid</div>
+            <div style="font-size:1.75rem;font-weight:800;font-family:var(--font-heading);color:var(--color-primary);">${amount}</div>
+          </div>
+
+          <!-- Disclaimer -->
+          <div style="padding:0.875rem 1.5rem;text-align:center;font-size:0.72rem;color:var(--color-muted);line-height:1.6;">
+            This is a simulated payment receipt generated for academic/demonstration purposes only.<br>
+            No actual financial transaction was processed. BizPermit is a DBMS academic project.
+          </div>
+        </div>`;
+
+      document.getElementById('receipt-modal').style.display = 'flex';
+    }
+  </script>
+</body>
+</html>

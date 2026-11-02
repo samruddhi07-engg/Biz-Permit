@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications — BizPermit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:2rem;">
+          <div>
+            <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Alerts & Updates</span>
+            <h1 style="font-size:1.875rem;margin-top:0.25rem;">Notifications</h1>
+          </div>
+          <div style="display:flex;gap:0.75rem;">
+            <button class="btn btn-secondary btn-sm" id="mark-all-btn" onclick="markAllRead()">
+              <span class="material-symbols-outlined" style="font-size:15px;">done_all</span> Mark All Read
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border-default);">
+          <button class="tab-btn active" onclick="filterNotifs(this,'all')">All</button>
+          <button class="tab-btn" onclick="filterNotifs(this,'unread')">Unread <span id="unread-count" class="badge" style="background:var(--accent-teal);color:#fff;font-size:0.6rem;padding:1px 6px;"></span></button>
+          <button class="tab-btn" onclick="filterNotifs(this,'read')">Read</button>
+        </div>
+
+        <div class="card" style="padding:0;">
+          <div id="notif-loading" style="padding:3rem;text-align:center;">
+            <div style="height:60px;border-radius:6px;background:var(--bg-secondary);animation:pulse 1.5s infinite;margin-bottom:0.75rem;"></div>
+            <div style="height:60px;border-radius:6px;background:var(--bg-secondary);animation:pulse 1.5s infinite;margin-bottom:0.75rem;"></div>
+            <div style="height:60px;border-radius:6px;background:var(--bg-secondary);animation:pulse 1.5s infinite;"></div>
+          </div>
+          <div id="notif-empty" style="display:none;padding:4rem;text-align:center;">
+            <span class="material-symbols-outlined" style="font-size:48px;color:var(--text-muted);display:block;margin-bottom:1rem;">notifications_none</span>
+            <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">No notifications</h3>
+            <p style="color:var(--text-secondary);">You're all caught up! Notifications about your applications will appear here.</p>
+          </div>
+          <div id="notif-list"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let allNotifs = [];
+    let currentFilter = 'all';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await requireAuth('OWNER');
+      renderSidebar('notifications','OWNER');
+      renderTopbar();
+      await loadNotifications();
+    });
+
+    async function loadNotifications() {
+      try {
+        const res = await api.get('/api/notifications');
+        document.getElementById('notif-loading').style.display = 'none';
+        allNotifs = res.success ? (res.data || []) : [];
+        renderNotifications(allNotifs);
+      } catch(e) {
+        document.getElementById('notif-loading').style.display = 'none';
+        document.getElementById('notif-empty').style.display = 'block';
+      }
+    }
+
+    function filterNotifs(btn, filter) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = filter;
+      let filtered = allNotifs;
+      if (filter === 'unread') filtered = allNotifs.filter(n => !n.is_read && !n.isRead);
+      if (filter === 'read') filtered = allNotifs.filter(n => n.is_read || n.isRead);
+      renderNotifications(filtered);
+    }
+
+    function renderNotifications(notifs) {
+      const unreadCount = allNotifs.filter(n => !n.is_read && !n.isRead).length;
+      const countEl = document.getElementById('unread-count');
+      countEl.textContent = unreadCount > 0 ? unreadCount : '';
+      countEl.style.display = unreadCount > 0 ? 'inline' : 'none';
+
+      if (!notifs.length) {
+        document.getElementById('notif-empty').style.display = 'block';
+        document.getElementById('notif-list').innerHTML = '';
+        return;
+      }
+      document.getElementById('notif-empty').style.display = 'none';
+
+      const typeConfig = {
+        'APPLICATION_SUBMITTED': { icon:'send', color:'#e0f2fe', iconColor:'#0284c7' },
+        'APPLICATION_APPROVED': { icon:'check_circle', color:'#d1fae5', iconColor:'#059669' },
+        'APPLICATION_REJECTED': { icon:'cancel', color:'#fee2e2', iconColor:'#dc2626' },
+        'CORRECTION_REQUIRED': { icon:'edit_note', color:'#fef9c3', iconColor:'#ca8a04' },
+        'INSPECTION_SCHEDULED': { icon:'calendar_today', color:'#f3e8ff', iconColor:'#9333ea' },
+        'LICENSE_ISSUED': { icon:'workspace_premium', color:'#d1fae5', iconColor:'#059669' },
+        'LICENSE_EXPIRING': { icon:'schedule', color:'#ffedd5', iconColor:'#ea580c' },
+        'PAYMENT_CONFIRMED': { icon:'payments', color:'#d1fae5', iconColor:'#059669' },
+        'DEFAULT': { icon:'notifications', color:'#f1f5f9', iconColor:'#475569' }
+      };
+
+      document.getElementById('notif-list').innerHTML = notifs.map(n => {
+        const isRead = n.is_read || n.isRead;
+        const cfg = typeConfig[n.type] || typeConfig.DEFAULT;
+        const date = n.created_at || n.createdAt;
+        const appId = n.reference_id || n.referenceId;
+        return `<div class="notif-item ${isRead ? '' : 'unread'}" onclick="markRead(${n.id}, '${appId}')">
+          <div class="notif-icon" style="background:${cfg.color};">
+            <span class="material-symbols-outlined" style="font-size:20px;color:${cfg.iconColor};">${cfg.icon}</span>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;">
+              <div style="font-weight:${isRead ? '500' : '700'};font-size:0.9rem;line-height:1.4;">${n.title || n.message || 'Notification'}</div>
+              ${!isRead ? '<span style="width:8px;height:8px;background:var(--accent-teal);border-radius:50%;flex-shrink:0;margin-top:5px;"></span>' : ''}
+            </div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.25rem;line-height:1.5;">${n.message || ''}</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.5rem;">${date ? timeAgo(new Date(date)) : '—'}</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    async function markRead(id, appId) {
+      try {
+        await api.patch('/api/notifications/' + id + '/read', {});
+        const n = allNotifs.find(n => n.id === id);
+        if (n) { n.is_read = true; n.isRead = true; }
+        renderNotifications(currentFilter === 'all' ? allNotifs : currentFilter === 'unread' ? allNotifs.filter(n => !n.is_read && !n.isRead) : allNotifs.filter(n => n.is_read || n.isRead));
+        if (appId) window.location.href = '/owner/application-details.html?id=' + appId;
+      } catch(e) {}
+    }
+
+    async function markAllRead() {
+      try {
+        await api.patch('/api/notifications/read-all', {});
+        allNotifs.forEach(n => { n.is_read = true; n.isRead = true; });
+        renderNotifications(allNotifs);
+        showToast('All notifications marked as read.', 'success');
+      } catch(e) { showToast('Failed to mark notifications read.', 'error'); }
+    }
+
+    function timeAgo(date) {
+      const diff = (new Date() - date) / 1000;
+      if (diff < 60) return 'just now';
+      if (diff < 3600) return Math.floor(diff/60) + ' min ago';
+      if (diff < 86400) return Math.floor(diff/3600) + ' hr ago';
+      if (diff < 604800) return Math.floor(diff/86400) + ' days ago';
+      return date.toLocaleDateString('en-IN');
+    }
+  </script>
+</body>
+</html>

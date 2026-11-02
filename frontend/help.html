@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help &amp; FAQs — BizPermit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+</head>
+<body>
+
+  <header id="public-header" class="public-header"></header>
+
+  <main style="padding: 4rem 0 6rem; flex: 1;">
+    <div class="container">
+      
+      <!-- Top Title -->
+      <div style="text-align: center; max-width: 700px; margin: 0 auto 3rem;">
+        <span style="font-family: var(--font-heading); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);">
+          APPLICANT RESOURCE DESK
+        </span>
+        <h1 style="margin-top: 0.5rem; margin-bottom: 1rem; font-size: 2.75rem;">Help &amp; Frequent Inquiries</h1>
+        <p style="font-size: 1.05rem;">
+          Find answers regarding electronic application submissions, required document formats, inspection scheduling, and license renewals.
+        </p>
+
+        <!-- Search input for FAQs -->
+        <div style="position: relative; max-width: 500px; margin: 2rem auto 0;">
+          <span class="material-symbols-outlined" style="position: absolute; left: 14px; top: 14px; color: var(--text-muted); font-size: 20px;">search</span>
+          <input type="text" id="faq-search" oninput="filterFaqs()" class="form-control" style="padding-left: 44px; border-radius: var(--radius-full);" placeholder="Type to filter questions...">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 3rem; max-width: 1100px; margin: 0 auto;" class="help-grid">
+        
+        <!-- Left Column: Searchable FAQs -->
+        <div id="faq-list" style="display: flex; flex-direction: column; gap: 1rem;">
+          
+          <div class="card faq-item" style="padding: 1.75rem;">
+            <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem;">What documents are mandatory for a General Trade License?</h4>
+            <p style="font-size: 0.9rem; line-height: 1.6;">
+              Every commercial trade application requires a valid lease agreement or property title deed, government-issued photo identification for the primary business owner, and proof of commercial registered address.
+            </p>
+          </div>
+
+          <div class="card faq-item" style="padding: 1.75rem;">
+            <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem;">Which file formats and sizes are permitted for document uploads?</h4>
+            <p style="font-size: 0.9rem; line-height: 1.6;">
+              The portal accepts PDF, JPG, JPEG, and PNG files up to 10MB per document. Files are encrypted on disk and checked for SHA-256 cryptographic integrity upon upload.
+            </p>
+          </div>
+
+          <div class="card faq-item" style="padding: 1.75rem;">
+            <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem;">What happens if an officer requests a correction?</h4>
+            <p style="font-size: 0.9rem; line-height: 1.6;">
+              Your application status transitions to <strong>Action Required</strong>. You will see the specific officer notes on your application details page. You can simply upload a corrected document or modify your form responses and click <em>Resubmit</em> without paying any additional fees.
+            </p>
+          </div>
+
+          <div class="card faq-item" style="padding: 1.75rem;">
+            <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem;">How is an on-site inspection coordinated?</h4>
+            <p style="font-size: 0.9rem; line-height: 1.6;">
+              When physical premises examination is mandated, a municipal inspector is assigned. A scheduled inspection date appears in your application timeline. The inspector conducts the field review and uploads a digital checklist with outcome verification.
+            </p>
+          </div>
+
+          <div class="card faq-item" style="padding: 1.75rem;">
+            <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem;">How does license renewal work?</h4>
+            <p style="font-size: 0.9rem; line-height: 1.6;">
+              Active permits nearing expiration (within 60–90 days) feature a single-click <em>Renew</em> button in your <strong>My Licenses</strong> tab. This initiates a linked renewal application prefilled with your existing records.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Status Explanations & Contact Desk -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+          
+          <div class="card">
+            <h4 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
+              Application Status Guide
+            </h4>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.85rem;">
+              <div>
+                <span class="badge badge-draft">Draft</span>
+                <p style="font-size: 0.75rem; margin-top: 4px;">Application is being completed and not yet submitted.</p>
+              </div>
+              <div>
+                <span class="badge badge-submitted">Submitted</span>
+                <p style="font-size: 0.75rem; margin-top: 4px;">Filing received by municipal intake desk.</p>
+              </div>
+              <div>
+                <span class="badge badge-review">Under Review</span>
+                <p style="font-size: 0.75rem; margin-top: 4px;">Assigned officer is verifying statutory evidence.</p>
+              </div>
+              <div>
+                <span class="badge badge-correction">Action Required</span>
+                <p style="font-size: 0.75rem; margin-top: 4px;">Applicant must update info or re-upload rejected files.</p>
+              </div>
+              <div>
+                <span class="badge badge-review">Inspection Required</span>
+                <p style="font-size: 0.75rem; margin-top: 4px;">On-site physical examiner audit scheduled.</p>
+              </div>
+              <div>
+                <span class="badge badge-approved">Approved</span>
+                <p style="font-size: 0.75rem; margin-top: 4px;">Statutory license issued with verifiable QR certificate.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Municipal Clerk Form -->
+          <div class="card" id="support">
+            <h4 style="margin-bottom: 0.75rem;">Speak to a Municipal Clerk</h4>
+            <p style="font-size: 0.85rem; margin-bottom: 1.25rem;">Have questions regarding municipal zoning or departmental routing? Send an inquiry directly to the help desk.</p>
+            
+            <form onsubmit="handleContact(event)">
+              <div class="form-group">
+                <label class="form-label">Your Name</label>
+                <input type="text" id="contact-name" class="form-control" required placeholder="John Doe">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="contact-email" class="form-control" required placeholder="john@example.com">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Inquiry Details</label>
+                <textarea id="contact-msg" class="form-control" required placeholder="Describe your question or municipal code inquiry..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Inquiry</button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer id="public-footer" class="public-footer"></footer>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPublicHeader('help');
+      renderPublicFooter();
+    });
+
+    function filterFaqs() {
+      const q = document.getElementById('faq-search').value.toLowerCase();
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(q) ? 'block' : 'none';
+      });
+    }
+
+    function handleContact(e) {
+      e.preventDefault();
+      showToast('Your inquiry has been submitted to the municipal clerk. Reference ticket generated.', 'success');
+      document.getElementById('contact-name').value = '';
+      document.getElementById('contact-email').value = '';
+      document.getElementById('contact-msg').value = '';
+    }
+  </script>
+</body>
+</html>

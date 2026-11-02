@@ -1,0 +1,156 @@
+/**
+ * BizPermit Unified Premium Enterprise Design System Tokens
+ * Civic-Tech & Enterprise SaaS Architecture
+ */
+
+:root {
+  /* ==========================================================
+     1. Brand Core & Semantic Palette
+     ========================================================== */
+  --color-primary: #050505;           /* Obsidian / Primary black CTA */
+  --color-primary-hover: #1f1f23;
+  --color-teal: #006B61;              /* Deep civic authoritative teal */
+  --color-teal-hover: #00534b;
+  --color-teal-dark: #003d37;
+  --color-mint: #7AE3CE;              /* Vibrant mint accent */
+  --color-mint-hover: #63d1ba;
+  --color-emerald: #66BE86;           /* Statutory verification emerald */
+
+  /* Surface & Background Systems */
+  --color-background: #FFFFFF;        /* Pure white dominant background */
+  --color-surface: #F8F8FA;           /* Subtle neutral surface */
+  --color-surface-hover: #F1F1F5;
+  --color-surface-elevated: #FFFFFF;
+  --color-surface-mint: #E6FAF5;      /* Light mint background */
+  --color-surface-lavender: #EFF6FF;  /* Light civic lavender background */
+  --color-surface-obsidian: #09090b;
+
+  /* Typography Colors */
+  --color-text: #111111;              /* High-contrast primary text */
+  --color-text-secondary: #73737D;    /* Calm secondary description text */
+  --color-muted: #8E8E93;             /* Accessible muted metadata */
+  --color-text-inverse: #FFFFFF;
+  --color-text-inverse-muted: #A1A1AA;
+
+  /* Borders & Dividers */
+  --color-border: #E8E8EC;            /* Crisp subtle structural border */
+  --color-border-light: #F2F2F5;
+  --color-border-strong: #D4D4D8;
+  --color-border-focus: #006B61;
+
+  /* State Semantics */
+  --color-success: #16834A;
+  --color-success-bg: #ECFDF5;
+  --color-success-border: #A7F3D0;
+
+  --color-warning: #B7791F;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-border: #FDE68A;
+
+  --color-error: #DC4545;
+  --color-error-bg: #FEF2F2;
+  --color-error-border: #FECACA;
+
+  --color-info: #0284C7;
+  --color-info-bg: #F0F9FF;
+  --color-info-border: #BAE6FD;
+
+  /* ==========================================================
+     2. Backward Compatibility Aliases for Existing Codebase
+     ========================================================== */
+  --bg-primary: var(--color-background);
+  --bg-secondary: var(--color-surface);
+  --bg-tertiary: var(--color-surface-hover);
+  --bg-elevated: var(--color-surface-elevated);
+  --bg-obsidian: var(--color-primary);
+  --bg-carbon: #18181B;
+
+  --text-primary: var(--color-text);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-muted);
+  --text-inverse: var(--color-text-inverse);
+  --text-inverse-muted: var(--color-text-inverse-muted);
+
+  --accent-teal: var(--color-teal);
+  --accent-mint: var(--color-mint);
+  --accent-emerald: var(--color-emerald);
+  --accent-mint-light: var(--color-surface-mint);
+  --accent-lavender: var(--color-surface-lavender);
+
+  --border-light: var(--color-border-light);
+  --border-default: var(--color-border);
+  --border-strong: var(--color-border-strong);
+  --border-dark: #27272A;
+
+  --state-success: var(--color-success);
+  --state-success-bg: var(--color-success-bg);
+  --state-success-border: var(--color-success-border);
+
+  --state-warning: var(--color-warning);
+  --state-warning-bg: var(--color-warning-bg);
+  --state-warning-border: var(--color-warning-border);
+
+  --state-error: var(--color-error);
+  --state-error-bg: var(--color-error-bg);
+  --state-error-border: var(--color-error-border);
+
+  --state-info: var(--color-info);
+  --state-info-bg: var(--color-info-bg);
+  --state-info-border: var(--color-info-border);
+
+  /* ==========================================================
+     3. Geometry, Radii & Layout Tokens
+     ========================================================== */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --header-height: 72px;
+  --sidebar-width: 260px;
+  --container-width: 1280px;
+  --max-content-width: 1320px;
+
+  /* ==========================================================
+     4. Elevation & Precision Shadows
+     ========================================================== */
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 2px 8px rgba(10, 10, 10, 0.03), 0 1px 2px rgba(10, 10, 10, 0.02);
+  --shadow-hover: 0 8px 24px -4px rgba(10, 10, 10, 0.08), 0 2px 6px rgba(10, 10, 10, 0.04);
+  --shadow-elevated: 0 16px 40px -8px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+  --shadow-dropdown: 0 12px 32px -4px rgba(0, 0, 0, 0.10), 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-glow-mint: 0 0 0 3px rgba(122, 227, 206, 0.35);
+  --shadow-glow-teal: 0 0 0 3px rgba(0, 107, 97, 0.25);
+
+  /* ==========================================================
+     5. Fluid Typography Families & Scales
+     ========================================================== */
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, Monaco, monospace;
+
+  /* ==========================================================
+     6. Motion & High-Performance Transition Timings
+     ========================================================== */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --transition-fast: 160ms var(--ease-out-expo);
+  --transition-normal: 240ms var(--ease-out-expo);
+  --transition-slow: 400ms var(--ease-out-expo);
+
+  /* ==========================================================
+     7. Z-Index Layer Architecture
+     ========================================================== */
+  --z-base: 1;
+  --z-sticky: 100;
+  --z-drawer: 400;
+  --z-header: 500;
+  --z-modal-backdrop: 900;
+  --z-modal: 1000;
+  --z-toast: 1100;
+  --z-tooltip: 1200;
+}

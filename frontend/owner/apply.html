@@ -1,0 +1,594 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New License Application — BizPermit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/animations.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link rel="stylesheet" href="/assets/css/components.css">
+</head>
+<body>
+
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+
+      <main class="dashboard-content">
+        
+        <div style="max-width: 900px; margin: 0 auto;">
+          
+          <!-- Stepper Header -->
+          <div style="margin-bottom: 2rem;">
+            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);">
+              DIGITAL STATUTORY FILING WIZARD
+            </span>
+            <h1 style="font-size: 2rem; margin-top: 0.25rem;">Commercial Permit Application</h1>
+          </div>
+
+          <!-- Stepper Navigation Progress Bar -->
+          <div class="stepper-nav">
+            <div id="step-nav-1" class="step-item active">
+              <div class="step-bubble">1</div>
+              <div class="step-text">
+                <span class="step-title">Select Business</span>
+                <span class="step-desc">Entity Profile</span>
+              </div>
+            </div>
+
+            <div id="step-nav-2" class="step-item">
+              <div class="step-bubble">2</div>
+              <div class="step-text">
+                <span class="step-title">License Confirm</span>
+                <span class="step-desc">Statutory Code</span>
+              </div>
+            </div>
+
+            <div id="step-nav-3" class="step-item">
+              <div class="step-bubble">3</div>
+              <div class="step-text">
+                <span class="step-title">Dynamic Specs</span>
+                <span class="step-desc">MongoDB Payload</span>
+              </div>
+            </div>
+
+            <div id="step-nav-4" class="step-item">
+              <div class="step-bubble">4</div>
+              <div class="step-text">
+                <span class="step-title">Upload Evidence</span>
+                <span class="step-desc">Encrypted Files</span>
+              </div>
+            </div>
+
+            <div id="step-nav-5" class="step-item">
+              <div class="step-bubble">5</div>
+              <div class="step-text">
+                <span class="step-title">Review &amp; Pay</span>
+                <span class="step-desc">Simulated Treasury</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1: Select Business -->
+          <div id="step-card-1" class="card" style="padding: 2.5rem;">
+            <h3 style="margin-bottom: 0.5rem;">Step 1: Choose Commercial Entity</h3>
+            <p style="margin-bottom: 1.5rem;">Select which registered business establishment this license application applies to.</p>
+
+            <div id="business-selection-list" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+              <div style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Loading your registered businesses...</div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 1.5rem;">
+              <a href="/owner/business-form.html" class="btn btn-secondary btn-sm">+ Register New Establishment</a>
+              <button onclick="goToStep(2)" class="btn btn-primary" id="btn-to-step-2" disabled>
+                <span>Continue to License Selection</span>
+                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Choose / Confirm License -->
+          <div id="step-card-2" class="card" style="padding: 2.5rem; display: none;">
+            <h3 style="margin-bottom: 0.5rem;">Step 2: Confirm License Framework</h3>
+            <p style="margin-bottom: 1.5rem;">Choose the exact license type from the municipal catalog.</p>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label class="form-label required">Select License Framework</label>
+              <select id="apply-license-type-select" onchange="onLicenseSelected()" class="form-select" style="font-weight: 600; font-size: 1rem;">
+                <option value="">Select License...</option>
+              </select>
+            </div>
+
+            <div id="selected-license-preview" class="card" style="background: var(--bg-secondary); border: 1px solid var(--border-default); padding: 1.5rem; margin-bottom: 2rem; display: none;">
+              <!-- Dynamic spec summary -->
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 1.5rem;">
+              <button onclick="goToStep(1)" class="btn btn-secondary">Previous</button>
+              <button onclick="createDraftAndGoToStep3()" id="btn-to-step-3" class="btn btn-primary" disabled>
+                <span>Initialize Draft &amp; Specifications</span>
+                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 3: Dynamic MongoDB Specific Form Responses -->
+          <div id="step-card-3" class="card" style="padding: 2.5rem; display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <h3 style="font-size: 1.35rem;">Step 3: Operational Specifications</h3>
+              <span id="draft-app-number-badge" class="badge badge-draft"></span>
+            </div>
+            <p style="margin-bottom: 1.5rem;">Enter flexible operational data stored dynamically in MongoDB.</p>
+
+            <form id="dynamic-specs-form" onsubmit="saveSpecsAndGoToStep4(event)">
+              <div id="dynamic-fields-container" style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2rem;">
+                <!-- Fields rendered according to selected license category -->
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 1.5rem;">
+                <button type="button" onclick="goToStep(2)" class="btn btn-secondary">Previous</button>
+                <div style="display: flex; gap: 10px;">
+                  <button type="button" onclick="saveDraftOnly()" class="btn btn-secondary">Save Draft</button>
+                  <button type="submit" class="btn btn-primary">
+                    <span>Save &amp; Upload Documents</span>
+                    <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Step 4: Upload Supporting Documents -->
+          <div id="step-card-4" class="card" style="padding: 2.5rem; display: none;">
+            <h3 style="margin-bottom: 0.5rem;">Step 4: Supporting Evidence &amp; Documents</h3>
+            <p style="margin-bottom: 1.5rem;">Upload required statutory certifications. Files are checked for SHA-256 integrity and securely indexed in MongoDB.</p>
+
+            <div id="requirements-upload-list" style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2rem;">
+              <!-- Upload fields per requirement -->
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 1.5rem;">
+              <button type="button" onclick="goToStep(3)" class="btn btn-secondary">Previous</button>
+              <button type="button" onclick="goToStep(5)" class="btn btn-primary">
+                <span>Review &amp; Simulated Payment</span>
+                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 5: Final Review & Simulated Treasury Payment -->
+          <div id="step-card-5" class="card" style="padding: 2.5rem; display: none;">
+            <h3 style="margin-bottom: 0.5rem;">Step 5: Review &amp; Official Submission</h3>
+            <p style="margin-bottom: 1.5rem;">Review all information before finalizing statutory submission to the municipal licensing board.</p>
+
+            <div id="final-review-summary" style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem;">
+              <!-- Review summary -->
+            </div>
+
+            <!-- Simulated Treasury Payment Notice -->
+            <div style="background-color: var(--accent-mint-light); border: 1px solid var(--accent-mint); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--accent-teal);">
+                  <span class="material-symbols-outlined">account_balance_wallet</span>
+                  <span>Municipal Fiscal Treasury (Simulated Academic Gateway)</span>
+                </div>
+                <div id="treasury-fee-display" style="font-size: 1.25rem; font-weight: 800; font-family: var(--font-heading);">$0.00</div>
+              </div>
+              <p style="font-size: 0.8rem; color: #004d40; line-height: 1.5;">
+                Fee payment is simulated directly for demonstration purposes. Clicking "Authorize Payment &amp; Submit Filing" will generate a municipal treasury transaction reference and transition this application to SUBMITTED status.
+              </p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-light); padding-top: 1.5rem;">
+              <button type="button" onclick="goToStep(4)" class="btn btn-secondary">Previous</button>
+              <button type="button" id="btn-final-submit" onclick="submitFinalApplication()" class="btn btn-primary btn-lg">
+                <span>Authorize Payment &amp; Submit Filing</span>
+                <span class="material-symbols-outlined" style="font-size: 18px;">verified</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let selectedBusinessId = null;
+    let selectedLicenseTypeId = null;
+    let activeApplicationId = null;
+    let currentLicenseData = null;
+    let currentBusinessData = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderSidebar('applications', 'owner');
+      renderTopbar('New Commercial Filing');
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const preselectedBiz = urlParams.get('businessId');
+      const preselectedLic = urlParams.get('licenseTypeId');
+
+      await loadBusinesses(preselectedBiz);
+      await loadLicenseTypes(preselectedLic);
+    });
+
+    async function loadBusinesses(preselectedId) {
+      try {
+        const res = await API.get('/businesses');
+        const container = document.getElementById('business-selection-list');
+        if (!res.success || res.data.length === 0) {
+          container.innerHTML = `
+            <div style="padding: 2rem; text-align: center; background: #fafafa; border-radius: var(--radius-md); border: 1px dashed var(--border-default);">
+              <p style="margin-bottom: 1rem;">No registered business establishments found.</p>
+              <a href="/owner/business-form.html" class="btn btn-primary btn-sm">+ Register First Business</a>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = res.data.map(b => `
+          <label style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem; border: 1px solid var(--border-default); border-radius: var(--radius-md); cursor: pointer; transition: all 0.15s ease;" class="biz-option-card">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <input type="radio" name="selected_business" value="${b.id}" onchange="selectBusiness(${b.id}, '${b.business_name}')" style="accent-color: #000; width: 18px; height: 18px;" ${preselectedId && Number(preselectedId) === b.id ? 'checked' : ''}>
+              <div>
+                <div style="font-weight: 700; font-size: 1rem;">${b.business_name}</div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">${b.address_line1}, ${b.city} • <span class="badge badge-draft" style="font-size:0.65rem;">${b.category_name}</span></div>
+              </div>
+            </div>
+            <span class="material-symbols-outlined" style="color: var(--text-muted); font-size: 20px;">storefront</span>
+          </label>
+        `).join('');
+
+        if (preselectedId) {
+          const match = res.data.find(b => b.id === Number(preselectedId));
+          if (match) selectBusiness(match.id, match.business_name);
+        }
+      } catch (err) {
+        showToast('Failed to load businesses: ' + err.message, 'error');
+      }
+    }
+
+    function selectBusiness(id, name) {
+      selectedBusinessId = id;
+      currentBusinessData = { id, name };
+      document.getElementById('btn-to-step-2').disabled = false;
+    }
+
+    async function loadLicenseTypes(preselectedLicId) {
+      try {
+        const res = await API.get('/license-types');
+        const select = document.getElementById('apply-license-type-select');
+        if (res.success && res.data) {
+          res.data.forEach(l => {
+            select.innerHTML += `<option value="${l.id}">${l.name} (${l.code}) — ${formatCurrency(l.fee)}</option>`;
+          });
+
+          if (preselectedLicId) {
+            select.value = preselectedLicId;
+            onLicenseSelected();
+          }
+        }
+      } catch (err) {
+        console.error('Error loading license types:', err);
+      }
+    }
+
+    async function onLicenseSelected() {
+      const id = document.getElementById('apply-license-type-select').value;
+      if (!id) {
+        document.getElementById('selected-license-preview').style.display = 'none';
+        document.getElementById('btn-to-step-3').disabled = true;
+        return;
+      }
+
+      try {
+        const res = await API.get(`/license-types/${id}`);
+        if (res.success && res.data) {
+          currentLicenseData = res.data;
+          selectedLicenseTypeId = id;
+
+          const preview = document.getElementById('selected-license-preview');
+          preview.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div>
+                <h4 style="font-size: 1.15rem;">${currentLicenseData.name}</h4>
+                <div style="font-size: 0.8rem; color: var(--accent-teal); font-weight: 600;">Oversight: ${currentLicenseData.department_name}</div>
+              </div>
+              <div style="font-size: 1.25rem; font-weight: 800; font-family: var(--font-heading);">${formatCurrency(currentLicenseData.fee)}</div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">${currentLicenseData.description || ''}</p>
+          `;
+          preview.style.display = 'block';
+          document.getElementById('btn-to-step-3').disabled = false;
+        }
+      } catch (err) {
+        showToast('Error loading license: ' + err.message, 'error');
+      }
+    }
+
+    function goToStep(stepNumber) {
+      for (let i = 1; i <= 5; i++) {
+        const card = document.getElementById(`step-card-${i}`);
+        const nav = document.getElementById(`step-nav-${i}`);
+        if (card) card.style.display = i === stepNumber ? 'block' : 'none';
+        if (nav) {
+          if (i === stepNumber) {
+            nav.className = 'step-item active';
+          } else if (i < stepNumber) {
+            nav.className = 'step-item completed';
+          } else {
+            nav.className = 'step-item';
+          }
+        }
+      }
+      window.scrollTo({ top: 100, behavior: 'smooth' });
+    }
+
+    async function createDraftAndGoToStep3() {
+      if (!selectedBusinessId || !selectedLicenseTypeId) {
+        showToast('Please select business and license framework.', 'error');
+        return;
+      }
+
+      try {
+        // If no draft exists yet, create one
+        if (!activeApplicationId) {
+          const res = await API.post('/applications', {
+            businessId: selectedBusinessId,
+            licenseTypeId: selectedLicenseTypeId,
+            applicationType: 'NEW'
+          });
+
+          if (res.success && res.data) {
+            activeApplicationId = res.data.id;
+            document.getElementById('draft-app-number-badge').textContent = `Draft Ref: ${res.data.application_number}`;
+          }
+        }
+
+        renderDynamicFields();
+        renderRequirementsUploadList();
+        goToStep(3);
+
+      } catch (err) {
+        showToast('Failed to initialize filing draft: ' + err.message, 'error');
+      }
+    }
+
+    function renderDynamicFields() {
+      const container = document.getElementById('dynamic-fields-container');
+      const code = currentLicenseData.code || '';
+
+      if (code.includes('FOD')) {
+        // Food establishment specific fields
+        container.innerHTML = `
+          <div class="form-group">
+            <label class="form-label required">Indoor Customer Seating Capacity</label>
+            <input type="number" id="f-seating" class="form-control" required value="40">
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Certified Grease Trap Installation</label>
+            <select id="f-grease" class="form-select" required>
+              <option value="true">Yes, Under-sink Hydro-mechanical Interceptor Installed</option>
+              <option value="false">No Interceptor Installed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Commercial Extraction &amp; Ventilation Hood Type</label>
+            <input type="text" id="f-hood" class="form-control" required value="Type-1 Grease Extraction Hood with Suppression System">
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Food Safety Manager Certification Number</label>
+            <input type="text" id="f-certnum" class="form-control" required value="CERT-FS-2026-MUNI">
+          </div>
+        `;
+      } else if (code.includes('FIR')) {
+        // Fire safety specific fields
+        container.innerHTML = `
+          <div class="form-group">
+            <label class="form-label required">Building Construction Type</label>
+            <input type="text" id="f-consttype" class="form-control" required value="Type II Non-Combustible Reinforced Concrete">
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Number of Designated Emergency Egress Doors</label>
+            <input type="number" id="f-exits" class="form-control" required value="2">
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Fire Extinguisher Inventory Count</label>
+            <input type="number" id="f-extcount" class="form-control" required value="4">
+          </div>
+        `;
+      } else {
+        // Standard commercial trade fields
+        container.innerHTML = `
+          <div class="form-group">
+            <label class="form-label required">Commercial Operating Area (Square Feet)</label>
+            <input type="number" id="f-sqft" class="form-control" required value="1200">
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Weekly Operational Hours</label>
+            <input type="text" id="f-hours" class="form-control" required value="08:00 - 20:00 Monday through Saturday">
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Estimated Total Staff / Employee Count</label>
+            <input type="number" id="f-employees" class="form-control" required value="5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Municipal Water / Utility Meter Reference</label>
+            <input type="text" id="f-meter" class="form-control" placeholder="MUNI-WTR-0000 (Optional)">
+          </div>
+        `;
+      }
+    }
+
+    async function saveSpecsAndGoToStep4(e) {
+      e.preventDefault();
+      await saveDraftOnly();
+      goToStep(4);
+    }
+
+    async function saveDraftOnly() {
+      if (!activeApplicationId) return;
+
+      const formData = {};
+      document.querySelectorAll('#dynamic-fields-container input, #dynamic-fields-container select').forEach(el => {
+        formData[el.id] = el.value;
+      });
+
+      try {
+        await API.put(`/applications/${activeApplicationId}/form`, { formData });
+        showToast('Dynamic specifications saved to MongoDB.', 'success');
+      } catch (err) {
+        showToast('Failed to save specifications: ' + err.message, 'error');
+      }
+    }
+
+    async function renderRequirementsUploadList() {
+      const container = document.getElementById('requirements-upload-list');
+      const reqs = currentLicenseData.requirements || [];
+
+      if (reqs.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">No specialized documents required for this permit framework.</p>';
+        return;
+      }
+
+      // Check already uploaded documents
+      const docsRes = await API.get(`/applications/${activeApplicationId}/documents`);
+      const existingDocs = docsRes.success ? docsRes.data : [];
+
+      container.innerHTML = reqs.map(r => {
+        const uploaded = existingDocs.find(d => d.requirementCode === r.requirement_code);
+        return `
+          <div class="card" style="padding: 1.25rem; border: 1px solid var(--border-default);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <div>
+                <span style="font-weight: 700; font-size: 0.95rem;">${r.title}</span>
+                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">${r.description || ''}</p>
+              </div>
+              ${r.is_mandatory ? '<span class="badge badge-correction">Mandatory</span>' : '<span class="badge badge-draft">Optional</span>'}
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light);">
+              <div id="status-${r.requirement_code}">
+                ${uploaded ? `
+                  <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--state-success);font-weight:600;">
+                    <span class="material-symbols-outlined" style="font-size:16px;">check_circle</span>
+                    <span>Uploaded: ${uploaded.originalFilename}</span>
+                  </span>
+                ` : `
+                  <span style="font-size:0.75rem;color:var(--text-muted);">No file uploaded yet (Max 10MB)</span>
+                `}
+              </div>
+
+              <div>
+                <input type="file" id="file-${r.requirement_code}" style="display: none;" onchange="uploadSingleDoc('${r.requirement_code}', this)">
+                <button type="button" onclick="document.getElementById('file-${r.requirement_code}').click()" class="btn btn-secondary btn-sm">
+                  <span class="material-symbols-outlined" style="font-size:14px;">upload_file</span>
+                  <span>${uploaded ? 'Replace Document' : 'Upload File'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function uploadSingleDoc(requirementCode, fileInput) {
+      if (!fileInput.files || fileInput.files.length === 0) return;
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('document', file);
+      formData.append('requirementCode', requirementCode);
+
+      const statusDiv = document.getElementById(`status-${requirementCode}`);
+      statusDiv.innerHTML = '<span style="font-size:0.8rem;color:var(--text-muted);">Uploading & hashing...</span>';
+
+      try {
+        const res = await API.post(`/applications/${activeApplicationId}/documents`, formData);
+        if (res.success && res.data) {
+          statusDiv.innerHTML = `
+            <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--state-success);font-weight:600;">
+              <span class="material-symbols-outlined" style="font-size:16px;">check_circle</span>
+              <span>Uploaded: ${res.data.originalFilename}</span>
+            </span>
+          `;
+          showToast(`Document uploaded: ${file.name}`, 'success');
+        }
+      } catch (err) {
+        statusDiv.innerHTML = `<span style="font-size:0.8rem;color:var(--state-error);">Upload failed: ${err.message}</span>`;
+      }
+    }
+
+    async function prepareFinalReview() {
+      const summaryDiv = document.getElementById('final-review-summary');
+      document.getElementById('treasury-fee-display').textContent = formatCurrency(currentLicenseData.fee);
+
+      summaryDiv.innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="card" style="background: var(--bg-secondary); padding: 1.25rem;">
+            <span class="form-label">Commercial Entity</span>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-top: 4px;">${currentBusinessData.name}</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">Registered Location</div>
+          </div>
+
+          <div class="card" style="background: var(--bg-secondary); padding: 1.25rem;">
+            <span class="form-label">Permit Framework</span>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-top: 4px;">${currentLicenseData.name}</div>
+            <div style="font-size: 0.8rem; color: var(--accent-teal); margin-top: 2px;">Oversight: ${currentLicenseData.department_name}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function submitFinalApplication() {
+      const btn = document.getElementById('btn-final-submit');
+      btn.disabled = true;
+      btn.innerHTML = '<span>Processing Submission &amp; Treasury Ledger...</span>';
+
+      try {
+        const res = await API.post(`/applications/${activeApplicationId}/submit`, {
+          transactionReference: `TXN-MUNI-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+        });
+
+        if (res.success && res.data) {
+          showToast('Filing successfully submitted and assigned to licensing officer!', 'success');
+          setTimeout(() => {
+            window.location.href = `/owner/application-details.html?id=${activeApplicationId}`;
+          }, 800);
+        }
+      } catch (err) {
+        showToast(err.message || 'Submission failed.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span>Authorize Payment &amp; Submit Filing</span><span class="material-symbols-outlined" style="font-size: 18px;">verified</span>';
+      }
+    }
+
+    // Hook step 5 preparation
+    const originalGoToStep = goToStep;
+    goToStep = function(stepNumber) {
+      if (stepNumber === 5) {
+        prepareFinalReview();
+      }
+      originalGoToStep(stepNumber);
+    };
+  </script>
+</body>
+</html>

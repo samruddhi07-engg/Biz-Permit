@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Dashboard — BizPermit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:2.5rem;">
+          <div>
+            <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Licensing Office</span>
+            <h1 id="staff-welcome" style="font-size:1.875rem;margin-top:0.25rem;">Staff Dashboard</h1>
+            <p style="color:var(--text-secondary);">Review applications, manage inspections, and issue municipal certifications.</p>
+          </div>
+          <div style="display:flex;gap:0.75rem;">
+            <a href="/staff/assigned.html" class="btn btn-primary btn-sm">
+              <span class="material-symbols-outlined" style="font-size:15px;">assignment</span> My Queue
+            </a>
+          </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2.5rem;">
+          <div class="card" style="padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+              <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);">Assigned</span>
+              <span class="material-symbols-outlined" style="font-size:20px;color:var(--accent-teal);">assignment</span>
+            </div>
+            <div id="stat-assigned" style="font-size:2.5rem;font-weight:800;font-family:var(--font-heading);line-height:1;">—</div>
+            <a href="/staff/assigned.html" style="font-size:0.75rem;color:var(--text-muted);text-decoration:underline;margin-top:0.5rem;display:block;">View queue →</a>
+          </div>
+          <div class="card" style="padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+              <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);">Pending Review</span>
+              <span class="material-symbols-outlined" style="font-size:20px;color:var(--state-warning);">pending_actions</span>
+            </div>
+            <div id="stat-pending" style="font-size:2.5rem;font-weight:800;font-family:var(--font-heading);line-height:1;">—</div>
+            <a href="/staff/assigned.html?status=SUBMITTED" style="font-size:0.75rem;color:var(--text-muted);text-decoration:underline;margin-top:0.5rem;display:block;">Review →</a>
+          </div>
+          <div class="card" style="padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+              <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);">Corrections Needed</span>
+              <span class="material-symbols-outlined" style="font-size:20px;color:var(--state-error);">edit_note</span>
+            </div>
+            <div id="stat-correction" style="font-size:2.5rem;font-weight:800;font-family:var(--font-heading);line-height:1;">—</div>
+            <a href="/staff/assigned.html?status=CORRECTION_REQUIRED" style="font-size:0.75rem;color:var(--text-muted);text-decoration:underline;margin-top:0.5rem;display:block;">View →</a>
+          </div>
+          <div class="card" style="padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+              <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);">Inspections</span>
+              <span class="material-symbols-outlined" style="font-size:20px;color:var(--accent-mint);">fact_check</span>
+            </div>
+            <div id="stat-inspections" style="font-size:2.5rem;font-weight:800;font-family:var(--font-heading);line-height:1;">—</div>
+            <a href="/staff/inspections.html" style="font-size:0.75rem;color:var(--text-muted);text-decoration:underline;margin-top:0.5rem;display:block;">View all →</a>
+          </div>
+        </div>
+
+        <!-- Recent Assigned Applications -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+          <div>
+            <div class="card">
+              <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-default);display:flex;justify-content:space-between;align-items:center;">
+                <h2 style="font-size:0.95rem;font-weight:700;margin:0;">Recent Applications</h2>
+                <a href="/staff/assigned.html" class="btn btn-secondary btn-sm">View All</a>
+              </div>
+              <div id="recent-apps" style="padding:0.5rem;"></div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-default);display:flex;justify-content:space-between;align-items:center;">
+                <h2 style="font-size:0.95rem;font-weight:700;margin:0;">Recent Inspections</h2>
+                <a href="/staff/inspections.html" class="btn btn-secondary btn-sm">View All</a>
+              </div>
+              <div id="recent-insp" style="padding:0.5rem;"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await requireAuth(['OFFICER','INSPECTOR','ADMIN']);
+      const session = getSession();
+      const user = session?.user;
+      if (user) {
+        const name = ((user.firstName||user.first_name||'') + ' ' + (user.lastName||user.last_name||'')).trim() || user.email;
+        document.getElementById('staff-welcome').textContent = 'Welcome, ' + name;
+      }
+      const role = user?.roles?.[0] || user?.role || '';
+      renderSidebar('dashboard', role.includes('INSPECTOR') && !role.includes('OFFICER') && !role.includes('ADMIN') ? 'INSPECTOR' : 'OFFICER');
+      renderTopbar();
+
+      try {
+        const res = await api.get('/api/staff/dashboard');
+        if (res.success) {
+          const d = res.data;
+          document.getElementById('stat-assigned').textContent = d.assignedCount ?? '—';
+          document.getElementById('stat-pending').textContent = d.pendingReviewCount ?? '—';
+          document.getElementById('stat-correction').textContent = d.correctionCount ?? '—';
+          document.getElementById('stat-inspections').textContent = d.inspectionsCount ?? '—';
+          renderRecentApps(d.recentAssigned || []);
+          renderRecentInsp(d.recentInspections || []);
+        }
+      } catch(e) {}
+    });
+
+    const statusBadge = {
+      DRAFT:'<span class="badge">Draft</span>',SUBMITTED:'<span class="badge badge-warning">Submitted</span>',
+      UNDER_REVIEW:'<span class="badge badge-warning">Under Review</span>',APPROVED:'<span class="badge badge-success">Approved</span>',
+      REJECTED:'<span class="badge badge-error">Rejected</span>',CORRECTION_REQUIRED:'<span class="badge badge-error">Correction</span>',
+      INSPECTION_REQUIRED:'<span class="badge badge-warning">Inspection</span>',LICENSE_ISSUED:'<span class="badge badge-success">Issued</span>'
+    };
+
+    function renderRecentApps(apps) {
+      const el = document.getElementById('recent-apps');
+      if (!apps.length) { el.innerHTML = '<p style="padding:1.5rem;text-align:center;color:var(--text-muted);font-size:0.85rem;">No applications assigned.</p>'; return; }
+      el.innerHTML = apps.map(a => `<a href="/staff/review.html?id=${a.id}" style="display:flex;justify-content:space-between;align-items:center;padding:0.85rem 1rem;border-radius:8px;text-decoration:none;color:inherit;transition:background 0.15s;" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background=''">
+        <div>
+          <div style="font-weight:600;font-size:0.85rem;">${a.application_number||'—'}</div>
+          <div style="font-size:0.75rem;color:var(--text-secondary);">${a.license_type_name||''}</div>
+        </div>
+        ${statusBadge[a.status]||'<span class="badge">'+a.status+'</span>'}
+      </a>`).join('');
+    }
+
+    function renderRecentInsp(insp) {
+      const el = document.getElementById('recent-insp');
+      if (!insp.length) { el.innerHTML = '<p style="padding:1.5rem;text-align:center;color:var(--text-muted);font-size:0.85rem;">No inspections assigned.</p>'; return; }
+      const stMap = {SCHEDULED:'<span class="badge badge-warning">Scheduled</span>',COMPLETED:'<span class="badge badge-success">Completed</span>',PASSED:'<span class="badge badge-success">Passed</span>',FAILED:'<span class="badge badge-error">Failed</span>'};
+      el.innerHTML = insp.map(i => `<a href="/staff/inspection-details.html?id=${i.id}" style="display:flex;justify-content:space-between;align-items:center;padding:0.85rem 1rem;border-radius:8px;text-decoration:none;color:inherit;transition:background 0.15s;" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background=''">
+        <div>
+          <div style="font-weight:600;font-size:0.85rem;">${i.inspection_number||i.application_number||'INS-'+i.id}</div>
+          <div style="font-size:0.75rem;color:var(--text-secondary);">${i.scheduled_date ? new Date(i.scheduled_date).toLocaleDateString('en-IN') : '—'}</div>
+        </div>
+        ${stMap[i.status]||'<span class="badge">'+i.status+'</span>'}
+      </a>`).join('');
+    }
+  </script>
+</body>
+</html>

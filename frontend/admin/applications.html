@@ -1,0 +1,303 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Oversight — BizPermit Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:2rem;">
+          <div>
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+              <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Executive Queue</span>
+              <span class="badge" style="background:rgba(0,107,97,0.1);color:var(--primary);font-size:0.65rem;">MySQL State Machine + MongoDB Forms</span>
+            </div>
+            <h1 style="font-size:1.875rem;margin-top:0.25rem;">Master Applications Registry</h1>
+            <p style="color:var(--text-secondary);">Enterprise-wide visibility into license requests, caseload assignment, and adjudication pipeline.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="loadApplications()">
+            <span class="material-symbols-outlined" style="font-size:15px;">refresh</span> Refresh
+          </button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="card" style="padding:1rem 1.25rem;margin-bottom:1.5rem;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:1rem;align-items:center;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:0.25rem;">Search App # / Enterprise</label>
+              <input type="text" id="filter-search" class="form-control" placeholder="Search application or business..." oninput="filterTable()">
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:0.25rem;">Adjudication Status</label>
+              <select id="filter-status" class="form-control" onchange="filterTable()">
+                <option value="">All Statuses</option>
+                <option value="SUBMITTED">SUBMITTED (Pending Review)</option>
+                <option value="UNDER_REVIEW">UNDER_REVIEW</option>
+                <option value="INSPECTION_PENDING">INSPECTION_PENDING</option>
+                <option value="CORRECTIONS_REQUIRED">CORRECTIONS_REQUIRED</option>
+                <option value="APPROVED">APPROVED</option>
+                <option value="REJECTED">REJECTED</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:0.75rem;margin-bottom:0.25rem;">Department</label>
+              <select id="filter-dept" class="form-control" onchange="filterTable()">
+                <option value="">All Departments</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border-default);display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="font-size:0.95rem;font-weight:700;margin:0;">Applications (<span id="total-count">0</span>)</h3>
+            <span class="badge" style="background:#f1f5f9;color:#64748b;font-size:0.7rem;">Live Workflow Queue</span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" style="width:100%;">
+              <thead>
+                <tr>
+                  <th>Application ID</th>
+                  <th>Business Enterprise</th>
+                  <th>Target Permit</th>
+                  <th>Department</th>
+                  <th>Assigned Officer</th>
+                  <th>Status</th>
+                  <th>Filed On</th>
+                  <th style="text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="apps-table-body">
+                <tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-muted);">Loading registry...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Reassign Officer Modal -->
+  <div id="assign-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:440px;">
+      <div class="modal-header">
+        <h3 style="font-size:1.1rem;font-weight:700;">Reassign Licensing Officer</h3>
+        <button class="modal-close" onclick="closeAssignModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="assign-form" onsubmit="event.preventDefault(); submitAssignment();">
+          <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem;">
+            Application: <strong id="assign-app-num" style="color:var(--primary);">-</strong>
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="assign-officer-select">Select Licensing Officer *</label>
+            <select id="assign-officer-select" class="form-control" required>
+              <option value="">Choose Officer</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="assign-notes">Assignment Remarks</label>
+            <textarea id="assign-notes" class="form-control" rows="2" placeholder="Reason for transfer or workload balancing..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAssignModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitAssignment()" id="btn-save-assign">Confirm Assignment</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let allApps = [];
+    let allOfficers = [];
+    let allDepartments = [];
+    let targetAppId = null;
+
+    async function initPage() {
+      const user = requireAuth('ADMIN');
+      if (!user) return;
+      renderSidebar('applications', 'ADMIN');
+      renderTopbar();
+
+      await Promise.all([loadDepartments(), loadOfficers(), loadApplications()]);
+    }
+
+    async function loadDepartments() {
+      try {
+        const res = await api.get('/departments');
+        allDepartments = res.data || [];
+        const sel = document.getElementById('filter-dept');
+        sel.innerHTML = '<option value="">All Departments</option>' +
+          allDepartments.map(d => `<option value="${d.name}">${escapeHtml(d.name)}</option>`).join('');
+      } catch (err) {
+        console.error('Failed to load departments', err);
+      }
+    }
+
+    async function loadOfficers() {
+      try {
+        const res = await api.get('/admin/users?role=OFFICER');
+        allOfficers = res.data || [];
+        const sel = document.getElementById('assign-officer-select');
+        sel.innerHTML = '<option value="">Choose Officer</option>' +
+          allOfficers.map(o => `<option value="${o.id}">${escapeHtml(o.full_name)} (${escapeHtml(o.email)})</option>`).join('');
+      } catch (err) {
+        console.error('Failed to load officers', err);
+      }
+    }
+
+    async function loadApplications() {
+      try {
+        const res = await api.get('/admin/applications');
+        allApps = res.data || [];
+        renderTable(allApps);
+      } catch (err) {
+        showToast('Error loading applications: ' + err.message, 'error');
+        document.getElementById('apps-table-body').innerHTML = 
+          '<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--danger);">Failed to load registry records.</td></tr>';
+      }
+    }
+
+    function renderTable(list) {
+      document.getElementById('total-count').textContent = list.length;
+      const tbody = document.getElementById('apps-table-body');
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-muted);">No applications match the specified criteria.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(a => {
+        const statusBadge = getStatusBadge(a.status);
+        const assignedName = a.assigned_to_name || '<em style="color:var(--text-muted);">Unassigned</em>';
+        const dateStr = a.created_at ? new Date(a.created_at).toLocaleDateString() : '-';
+
+        return `
+          <tr>
+            <td>
+              <a href="/owner/application-details.html?id=${a.id}" style="font-family:monospace;font-weight:700;color:var(--primary);text-decoration:none;">
+                #${escapeHtml(a.application_number || String(a.id))}
+              </a>
+            </td>
+            <td>
+              <strong style="color:var(--text-primary);">${escapeHtml(a.business_name || 'N/A')}</strong>
+              <div style="font-size:0.75rem;color:var(--text-muted);">${escapeHtml(a.owner_name || '')}</div>
+            </td>
+            <td>${escapeHtml(a.license_name || a.license_code || 'Permit')}</td>
+            <td><span class="badge" style="background:#f1f5f9;color:#334155;">${escapeHtml(a.department_name || '-')}</span></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:0.4rem;">
+                <span style="font-size:0.85rem;">${assignedName}</span>
+                <button class="btn btn-sm btn-secondary" onclick="openAssignModal(${a.id}, '${escapeHtml(a.application_number || String(a.id))}', ${a.assigned_to || 'null'})" style="padding:2px 6px;font-size:0.65rem;" title="Reassign Officer">
+                  <span class="material-symbols-outlined" style="font-size:12px;">swap_horiz</span>
+                </button>
+              </div>
+            </td>
+            <td>${statusBadge}</td>
+            <td style="font-size:0.8rem;color:var(--text-muted);">${dateStr}</td>
+            <td style="text-align:right;">
+              <a href="/owner/application-details.html?id=${a.id}" class="btn btn-sm btn-secondary" title="View Full Dossier">
+                <span class="material-symbols-outlined" style="font-size:14px;">visibility</span>
+              </a>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterTable() {
+      const q = (document.getElementById('filter-search').value || '').toLowerCase();
+      const status = document.getElementById('filter-status').value;
+      const dept = document.getElementById('filter-dept').value;
+
+      const filtered = allApps.filter(a => {
+        const matchesQ = !q || 
+          (a.application_number && a.application_number.toLowerCase().includes(q)) || 
+          (a.business_name && a.business_name.toLowerCase().includes(q)) ||
+          (a.license_name && a.license_name.toLowerCase().includes(q));
+        const matchesStatus = !status || a.status === status;
+        const matchesDept = !dept || (a.department_name && a.department_name === dept);
+        return matchesQ && matchesStatus && matchesDept;
+      });
+
+      renderTable(filtered);
+    }
+
+    function getStatusBadge(status) {
+      switch(status) {
+        case 'APPROVED': return '<span class="badge badge-success">APPROVED</span>';
+        case 'REJECTED': return '<span class="badge badge-error">REJECTED</span>';
+        case 'UNDER_REVIEW': return '<span class="badge" style="background:#e0f2fe;color:#0369a1;">UNDER REVIEW</span>';
+        case 'INSPECTION_PENDING': return '<span class="badge badge-warning">INSPECTION</span>';
+        case 'CORRECTIONS_REQUIRED': return '<span class="badge" style="background:#fef3c7;color:#92400e;">CORRECTIONS</span>';
+        default: return `<span class="badge" style="background:#f1f5f9;color:#64748b;">${status || 'DRAFT'}</span>`;
+      }
+    }
+
+    function openAssignModal(appId, appNum, currentOfficerId) {
+      targetAppId = appId;
+      document.getElementById('assign-app-num').textContent = '#' + appNum;
+      document.getElementById('assign-officer-select').value = currentOfficerId || '';
+      document.getElementById('assign-notes').value = '';
+      document.getElementById('assign-modal').style.display = 'flex';
+    }
+
+    function closeAssignModal() {
+      document.getElementById('assign-modal').style.display = 'none';
+      targetAppId = null;
+    }
+
+    async function submitAssignment() {
+      const officerId = document.getElementById('assign-officer-select').value;
+      const notes = document.getElementById('assign-notes').value.trim();
+
+      if (!officerId) {
+        showToast('Please select a licensing officer.', 'warning');
+        return;
+      }
+
+      const btn = document.getElementById('btn-save-assign');
+      btn.disabled = true;
+      btn.textContent = 'Assigning...';
+
+      try {
+        await api.put(`/admin/applications/${targetAppId}/assign`, { officerId: parseInt(officerId, 10), notes });
+        showToast('Application successfully reassigned!', 'success');
+        closeAssignModal();
+        await loadApplications();
+      } catch (err) {
+        showToast('Reassignment failed: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Confirm Assignment';
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]);
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>

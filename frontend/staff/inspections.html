@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspections — BizPermit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/animations.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar"></aside>
+    <div class="dashboard-main">
+      <header id="dashboard-topbar" class="dashboard-topbar"></header>
+      <main class="dashboard-content">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:2rem;">
+          <div>
+            <span style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Field Inspections</span>
+            <h1 style="font-size:1.875rem;margin-top:0.25rem;">My Inspections</h1>
+            <p style="color:var(--text-secondary);">Scheduled and completed field inspection visits.</p>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card" style="padding:1.25rem 1.5rem;margin-bottom:1.5rem;">
+          <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;">
+            <div style="flex:1;min-width:220px;position:relative;">
+              <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--text-muted);">search</span>
+              <input id="insp-search" type="text" placeholder="Search by application or business..." class="form-control" style="padding-left:2.5rem;">
+            </div>
+            <select id="status-filter" class="form-control" style="max-width:180px;">
+              <option value="">All Statuses</option>
+              <option value="SCHEDULED">Scheduled</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="PASSED">Passed</option>
+              <option value="FAILED">Failed</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <div id="insp-loading" style="padding:3rem;">
+            <div style="height:50px;border-radius:6px;background:var(--bg-secondary);animation:pulse 1.5s infinite;margin-bottom:0.75rem;"></div>
+            <div style="height:50px;border-radius:6px;background:var(--bg-secondary);animation:pulse 1.5s infinite;"></div>
+          </div>
+          <div id="insp-empty" style="display:none;padding:4rem;text-align:center;">
+            <span class="material-symbols-outlined" style="font-size:48px;color:var(--text-muted);display:block;margin-bottom:1rem;">fact_check</span>
+            <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">No inspections assigned</h3>
+            <p style="color:var(--text-secondary);">Inspections assigned to you will appear here.</p>
+          </div>
+          <div id="insp-table-wrap" style="display:none;overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Inspection ID</th><th>Application</th><th>Business</th><th>Scheduled Date</th><th>Status</th><th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="insp-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/components.js"></script>
+  <script>
+    let allInsp = [];
+    document.addEventListener('DOMContentLoaded', async () => {
+      await requireAuth(['OFFICER','INSPECTOR','ADMIN']);
+      const session = getSession();
+      const role = session?.user?.roles?.[0] || session?.user?.role || 'INSPECTOR';
+      renderSidebar('inspections', role);
+      renderTopbar();
+      await loadInspections();
+      document.getElementById('insp-search').addEventListener('input', applyFilters);
+      document.getElementById('status-filter').addEventListener('change', applyFilters);
+    });
+
+    async function loadInspections() {
+      try {
+        const session = getSession();
+        const res = await api.get('/api/inspections?inspectorId=' + session.user.id);
+        document.getElementById('insp-loading').style.display = 'none';
+        allInsp = res.success ? (res.data || []) : [];
+        applyFilters();
+      } catch(e) {
+        document.getElementById('insp-loading').style.display = 'none';
+        document.getElementById('insp-empty').style.display = 'block';
+      }
+    }
+
+    function applyFilters() {
+      const s = document.getElementById('insp-search').value.toLowerCase();
+      const st = document.getElementById('status-filter').value;
+      const filtered = allInsp.filter(i => {
+        const an = (i.application_number||'').toLowerCase();
+        const bn = (i.business_name||'').toLowerCase();
+        return (!s || an.includes(s) || bn.includes(s)) && (!st || i.status === st);
+      });
+      renderTable(filtered);
+    }
+
+    const stBadge = {
+      SCHEDULED:'<span class="badge badge-warning">Scheduled</span>',
+      IN_PROGRESS:'<span class="badge badge-warning">In Progress</span>',
+      PASSED:'<span class="badge badge-success">Passed</span>',
+      FAILED:'<span class="badge badge-error">Failed</span>',
+      CANCELLED:'<span class="badge">Cancelled</span>'
+    };
+
+    function renderTable(insp) {
+      if (!insp.length) {
+        document.getElementById('insp-empty').style.display = 'block';
+        document.getElementById('insp-table-wrap').style.display = 'none';
+        return;
+      }
+      document.getElementById('insp-empty').style.display = 'none';
+      document.getElementById('insp-table-wrap').style.display = 'block';
+      document.getElementById('insp-tbody').innerHTML = insp.map(i => {
+        const canAction = ['SCHEDULED','IN_PROGRESS'].includes(i.status);
+        return `<tr>
+          <td><code style="font-size:0.75rem;background:var(--bg-secondary);padding:2px 6px;border-radius:4px;">INS-${String(i.id).padStart(5,'0')}</code></td>
+          <td style="font-size:0.85rem;font-weight:600;">${i.application_number||'—'}</td>
+          <td style="font-size:0.85rem;">${i.business_name||'—'}</td>
+          <td style="font-size:0.85rem;">${i.scheduled_date ? new Date(i.scheduled_date).toLocaleDateString('en-IN',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—'}</td>
+          <td>${stBadge[i.status]||('<span class="badge">'+i.status+'</span>')}</td>
+          <td>${canAction ? `<a href="/staff/inspection-details.html?id=${i.id}" class="btn btn-primary btn-sm">
+            <span class="material-symbols-outlined" style="font-size:14px;">fact_check</span> Conduct
+          </a>` : `<a href="/staff/inspection-details.html?id=${i.id}" class="btn btn-secondary btn-sm">View</a>`}</td>
+        </tr>`;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
